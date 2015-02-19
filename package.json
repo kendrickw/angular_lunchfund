@@ -13,8 +13,12 @@
         "jit-grunt": "~0.7.0"
     },
     "dependencies": {
-        "express": "3.2.x",
+        "express": "3.2.x",        
         "ejs": "1.0.x",
+        "passport": "*",
+        "passport-google-oauth": "*",
+        "mysql": "*",
+        "express-myconnection": "*",
         "request": "2.48.x",
         "async": "0.9.x"
     }  
