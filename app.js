@@ -53,8 +53,17 @@ passport.use(new GoogleStrategy({
         // represent the logged-in user.  In a typical application, you would want
         // to associate the Google account with a user record in your database,
         // and return that user instead.
-        console.log(profile);
-        return done(null, profile);
+        if (profile._json) {
+            return done(null, {
+                firstname: profile._json.given_name,
+                lastname: profile._json.family_name,
+                initial: profile._json.given_name.charAt(0) + profile._json.family_name.charAt(0),
+                email: profile._json.email,
+                picture: profile._json.picture
+            });
+        } else {
+            return done(null, false);
+        }
     });
 }));
 
@@ -110,7 +119,7 @@ function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     } else {
-        res.redirect('/auth/google');
+        res.redirect('/login');
     }
 }
 
@@ -133,16 +142,18 @@ app.get('/auth/google', passport.authenticate('google', {
 //   login page.  Otherwise, the primary route function function will be called,
 //   which, in this example, will redirect the user to the home page.
 app.get('/auth/google/callback', passport.authenticate('google', {
-    failureRedirect: '/logout'
+    failureRedirect: '/login'
 }), function (req, res) {
     res.redirect('/');
 });
 
 
-app.get('/db/users', db.users);
+// MYSQL endpoints
+app.get('/db/lunchers', db.lunchers);
 
 
-app.get('/', function (req, res) {
+// Main application endpoints
+app.get('/', ensureAuthenticated, function (req, res) {
     res.render('index', {
         'version' : app_version,
         COPYRIGHT_TEXT: copyright_text,

@@ -8,21 +8,23 @@
     </head>
     
     <body>
+        <script type="text/javascript">var currentuser=<%- JSON.stringify(user) %>;</script>
+        
         <nav-bar></nav-bar>
 
 <!--main-->
 <div class="container" id="main">
   
     <!-- Luncher list -->
-    <div class="panel panel-default" ng-controller="LuncherController as luncher">
+    <div class="panel panel-default" ng-controller="LuncherController as luncherCtrl">
         <div class="panel-heading">
-            <span class="badge">{{luncher.getLunchers().length}} lunchers</span>
+            <span class="badge">{{luncherCtrl.getLunchers().length}} lunchers</span>
             <a href="#editLuncherModal" role="button" 
                data-toggle="modal" class="pull-right"><i class="glyphicon glyphicon-edit"></i> Edit</a>
         </div>
 		<div class="panel-body" >
-            
-            <img ng-repeat="user in luncher.getLunchers()" ng-src="{{user.img}}" class="img-circle">
+            <img ng-repeat="user in luncherCtrl.getLunchers()" ng-src="{{user.img}}" class="img-circle"></img>
+            <div class="img-circle profile-pic">WW</div>
             <!--
             <img ng-repeat="user in luncher.getLunchers()" ng-src="{{user.img}}" height="28px">
             -->

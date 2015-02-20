@@ -76,13 +76,13 @@
             lunchfund: 3
         } ];
 
-    app.controller('LuncherController', function () {
-        this.user = users[0];   // Logged in user
+    app.controller('LuncherController', [ '$scope', function ($scope) {
+        $scope.currentuser = window.currentuser;
         
         this.getLunchers = function () {
             return users;
         };
-    });
+    }]);
     
     app.controller('FundController', [ '$scope', function ($scope) {
         $scope.billAmount = 0;
