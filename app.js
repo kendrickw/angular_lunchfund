@@ -13,7 +13,7 @@ var express = require('express'),
     mysql = require('mysql');
 
 var app_version = require('./package.json').version,
-    copyright_text = config.session.copyright;
+    copyright_text = "<i class='glyphicon glyphicon-copyright-mark'></i> Lunchfund 2013, 2015";
 
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
@@ -30,6 +30,13 @@ passport.deserializeUser(function (obj, done) {
     done(null, obj);
 });
 
+// Determine hostname where app is deployed
+var hostname = "localhost:3000";
+if (process.env.VCAP_APPLICATION) {
+    var bluemix_env = JSON.parse(process.env.VCAP_APPLICATION);
+    hostname = bluemix_env.application_uris;
+}
+
 // Use the GoogleStrategy within Passport.
 //   Strategies in Passport require a `verify` function, which accept
 //   credentials (in this case, an accessToken, refreshToken, and Google
@@ -37,7 +44,7 @@ passport.deserializeUser(function (obj, done) {
 passport.use(new GoogleStrategy({
     clientID: config.google_oauth2.GOOGLE_CLIENT_ID,
     clientSecret: config.google_oauth2.GOOGLE_CLIENT_SECRET,
-    callbackURL: config.google_oauth2.callbackURL
+    callbackURL: "http://" + hostname + "/auth/google/callback"
 }, function (accessToken, refreshToken, profile, done) {
     // asynchronous verification, for effect...
     process.nextTick(function () {
@@ -52,20 +59,6 @@ passport.use(new GoogleStrategy({
 }));
 
 var app = express();
-
-/*
-$services = getenv("VCAP_SERVICES");
-if ($services != null) {
-    $services_json = json_decode($services, true);
-    $mysql_config = $services_json["cleardb"][0]["credentials"];
-
-    $host = $mysql_config["hostname"];
-    $user = $mysql_config["username"];
-    $pass = $mysql_config["password"];
-    $port = $mysql_config["port"];
-    $dbname = $mysql_config["name"];    
-}
-*/
 
 //all environments
 app.configure(function () {
@@ -84,7 +77,7 @@ app.configure(function () {
     app.use(express.cookieParser());
     app.use(express.bodyParser());
     app.use(express.multipart());
-    app.use(express.session({ secret: config.session.secret }));
+    app.use(express.session({ secret: config.google_oauth2.GOOGLE_CLIENT_SECRET }));
     
     // Initialize Passport!  Also use passport.session() middleware, to support
     // persistent login sessions (recommended).
@@ -149,7 +142,7 @@ app.get('/auth/google/callback', passport.authenticate('google', {
 app.get('/db/users', db.users);
 
 
-app.get('/', ensureAuthenticated, function (req, res) {
+app.get('/', function (req, res) {
     res.render('index', {
         'version' : app_version,
         COPYRIGHT_TEXT: copyright_text,
