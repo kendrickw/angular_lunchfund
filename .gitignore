@@ -28,6 +28,8 @@ bower_components
 # Users Environment Variables
 .lock-wscript
 
+routes/config.js
+
 # =========================
 # Operating System Files
 # =========================
@@ -74,4 +76,3 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
-routes/config.js
