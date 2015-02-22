@@ -13,7 +13,7 @@ var express = require('express'),
     mysql = require('mysql');
 
 var app_version = require('./package.json').version,
-    copyright_text = "<i class='glyphicon glyphicon-copyright-mark'></i> Lunchfund 2013, 2015";
+    copyright_text = "Lunchfund 2013, 2015";
 
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to

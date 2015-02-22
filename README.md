@@ -8,7 +8,6 @@ The application uses Node.js®
 ## How to deploy
 npm install
 bower install
-grunt
 node app.js
 
 ## How it works
