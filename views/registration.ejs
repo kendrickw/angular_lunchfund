@@ -1,13 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="registration">
     <head>
-        <title>LunchFund App Login</title>
+        <title>LunchFund App Registration</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         <link rel="stylesheet" type="text/css" href="bootstrap/dist/css/bootstrap.min.css" />
         <link rel="stylesheet" type="text/css" href="style/login.min.css" />
     </head>
     
-    <body>
+    <body ng-controller="RegController">
+        
+        <!-- Pass Node.js variables into HTML page -->
+        <script type="text/javascript">
+            var email=<%- JSON.stringify(email) %>;
+            var lunchers=<%- JSON.stringify(lunchers) %>;
+        </script>
         
         <div class="site-wrapper">
             <div class="site-wrapper-inner">
@@ -21,14 +27,19 @@
                     </div>                    
                     
                     <div class="inner cover">
-                        <h1 class="cover-heading">You are not logged in.</h1>
                         
-                        <p class="lead">
-                            <a href="/auth/google">
-                                <img src="images/google_signin.png" 
-                                     alt="Google Login" class="img-center"></img>
-                            </a>
-                        </p>
+                        <form>
+                            <div class="form-group">                                
+                                <label for="luncher">Register <code>{{email}}</code> with:</label>
+                                <select class="form-control" id="luncher"
+                                        ng-model="selected"
+                                        ng-options="user as user.username for user in lunchers">
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary" 
+                                        ng-click="register(selected)">Register as {{selected.username}}</button>
+                        </form>
+                        
                     </div>
 
                     <div class="mastfoot">
@@ -39,9 +50,10 @@
                 
                 </div> <!-- /cover-container -->
             </div> <!-- site-wrapper-inner -->
-        </div> <!-- site-wrapper -->
-        
+        </div> <!-- site-wrapper -->    
+    
         <script type="text/javascript" src="angular/angular.min.js"></script>
         <script type="text/javascript" src="angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+        <script type="text/javascript" src="js/registration.js"></script>
     </body>
 </html>

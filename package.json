@@ -17,8 +17,8 @@
         "ejs": "1.0.x",
         "passport": "*",
         "passport-google-oauth": "*",
+        "knex": "*",
         "mysql": "*",
-        "express-myconnection": "*",
         "request": "2.48.x",
         "async": "0.9.x"
     }  

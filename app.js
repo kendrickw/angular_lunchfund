@@ -8,9 +8,7 @@ var express = require('express'),
     config = require('./routes/config'),
     passport = require('passport'),
     GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
-    db = require('./routes/db'),
-    connection = require('express-myconnection'),
-    mysql = require('mysql');
+    db = require('./routes/db');
 
 var app_version = require('./package.json').version,
     copyright_text = "Lunchfund 2013, 2015";
@@ -48,22 +46,23 @@ passport.use(new GoogleStrategy({
 }, function (accessToken, refreshToken, profile, done) {
     // asynchronous verification, for effect...
     process.nextTick(function () {
-      
+
         // To keep the example simple, the user's Google profile is returned to
         // represent the logged-in user.  In a typical application, you would want
         // to associate the Google account with a user record in your database,
         // and return that user instead.
         if (profile._json) {
-            return done(null, {
+            var user = {
                 firstname: profile._json.given_name,
                 lastname: profile._json.family_name,
                 initial: profile._json.given_name.charAt(0) + profile._json.family_name.charAt(0),
                 email: profile._json.email,
                 picture: profile._json.picture
-            });
-        } else {
-            return done(null, false);
+            };
+            return done(null, user);
         }
+
+        return done(null, false);
     });
 }));
 
@@ -75,39 +74,30 @@ app.configure(function () {
     app.set('views', __dirname + '/views');
     app.set('view engine', 'ejs');
     app.engine('html', require('ejs').renderFile);
-    
+
     app.use(express['static'](path.join(__dirname, 'public')));
     app.use(express['static'](path.join(__dirname, 'bower_components')));
     app.use('/style', express['static'](path.join(__dirname, '/public/css')));
     app.use('/fonts', express['static'](path.join(__dirname, '/bower_components/bootstrap/fonts')));
-    
+
     app.use(express.favicon());
     app.use(express.logger('dev'));
     app.use(express.cookieParser());
     app.use(express.bodyParser());
     app.use(express.multipart());
     app.use(express.session({ secret: config.google_oauth2.GOOGLE_CLIENT_SECRET }));
-    
+
     // Initialize Passport!  Also use passport.session() middleware, to support
     // persistent login sessions (recommended).
     app.use(passport.initialize());
     app.use(passport.session());
-    
-    // MYSQL connection
-    app.use(connection(mysql, {
-        host: config.mysql_credential.hostname,
-        user: config.mysql_credential.username,
-        password : config.mysql_credential.password,
-        port : config.mysql_credential.port,
-        database: config.mysql_credential.name
-    }, 'request'));
-    
+
     app.use(app.router);
 });
 
 // development only
 if ('development' === app.get('env')) {
-	app.use(express.errorHandler());
+    app.use(express.errorHandler());
 }
 
 // Simple route middleware to ensure user is authenticated.
@@ -117,7 +107,15 @@ if ('development' === app.get('env')) {
 //   login page.
 function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
-        return next();
+        db.refreshLuncherRecord(req.user).then(function (numRows) {
+            if (numRows !== 1) {
+                res.redirect('/registration');
+            }
+            return next();
+        })['catch'](function (error) {
+            console.error(error);
+            res.redirect('/login');
+        });
     } else {
         res.redirect('/login');
     }
@@ -134,6 +132,7 @@ app.get('/auth/google', passport.authenticate('google', {
 }), function (req, res) {
     // The request will be redirected to Google for authentication, so this
     // function will not be called.
+    console.log(res);
 });
 
 // GET /auth/google/callback
@@ -149,7 +148,8 @@ app.get('/auth/google/callback', passport.authenticate('google', {
 
 
 // MYSQL endpoints
-app.get('/db/lunchers', db.lunchers);
+app.get('/db/lunchers', ensureAuthenticated, db.getLunchers);
+app.put('/db/luncher/:id', db.updateLuncher);
 
 
 // Main application endpoints
@@ -161,7 +161,7 @@ app.get('/', ensureAuthenticated, function (req, res) {
     });
 });
 
-app.get('/account', ensureAuthenticated, function (req, res) {
+app.get('/account', function (req, res) {
     res.render('account', {
         user: req.user
     });
@@ -178,6 +178,23 @@ app.get('/logout', function (req, res) {
     res.redirect('/login');
 });
 
+app.get('/registration', function (req, res) {
+    if (!req.user) {
+        res.redirect('/login');
+    }
+
+    db.getLunchersWithoutGmail().then(function (rows) {
+        res.render('registration', {
+            email: req.user.email,
+            lunchers: rows,
+            COPYRIGHT_TEXT: copyright_text
+        });
+    })['catch'](function (error) {
+        res.status(400);
+        res.send(error);
+    });
+
+});
 
 function getFormattedDate() {
     var date = new Date(),
@@ -189,6 +206,6 @@ function getFormattedDate() {
 
 var server = http.createServer(app);
 server.listen(app.get('port'), function () {
-	console.log('Express server listening on port ' + app.get('port'));
+    console.log('Express server listening on port ' + app.get('port'));
 
 });

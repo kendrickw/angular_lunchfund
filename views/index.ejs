@@ -54,7 +54,7 @@
                     <!-- Header Bar -->
                     <div class="row header">
                         <div class="col-xs-12">
-                            <div class="user pull-right" ng-controller="LuncherController as luncherCtrl">
+                            <div class="user pull-right" ng-controller="LuncherController">
                                 <div class="item dropdown">
                                     <a href="#" class="dropdown-toggle" style="text-decoration: none;">
                                         <div ng-if="currentuser.picture">
@@ -67,12 +67,19 @@
                                    
                                     <ul class="dropdown-menu dropdown-menu-right">
                                         <li class="dropdown-header">
-                                            {{currentuser.firstname}}
+                                            {{currentuser.username}}
                                         </li>
                                         <li class="divider"></li>
-                                        <li class="link">
-                                            <a href="#">Profile</a>
+                                        <li class="dropdown-header link">
+                                            Email: {{currentuser.email}}
                                         </li>
+                                        <li class="dropdown-header link">
+                                            Firstname: {{currentuser.firstname}}
+                                        </li>
+                                        <li class="dropdown-header link">
+                                            Lastname: {{currentuser.lastname}}
+                                        </li>
+                                        <li class="divider"></li>
                                         <li class="link">
                                             <a href="/logout">Logout</a>
                                         </li>
