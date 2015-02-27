@@ -150,6 +150,8 @@ app.get('/auth/google/callback', passport.authenticate('google', {
 // MYSQL endpoints
 app.get('/db/lunchers', ensureAuthenticated, db.getLunchers);
 app.put('/db/luncher/:id', db.updateLuncher);
+app.get('/db/events', ensureAuthenticated, db.getLunchEvents);
+app.post('/db/event', ensureAuthenticated, db.createEvent);
 
 
 // Main application endpoints

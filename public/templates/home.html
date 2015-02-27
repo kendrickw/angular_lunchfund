@@ -4,38 +4,28 @@
     <!-- Luncher list -->
     <div class="panel panel-default" >
         <div class="panel-heading">
-            <span class="badge">{{attendee.length}} lunchers</span>
+            <span class="badge">{{LuncherModel.attendee().length}} lunchers</span>
             <a role="button" class="pull-right"
-               ng-click="isCollapsed = !isCollapsed"><i class="glyphicon glyphicon-edit"></i> Edit</a>
+               ng-click="LuncherModel.isCollapsed = !LuncherModel.isCollapsed"><i class="glyphicon glyphicon-edit"></i> Edit</a>
         </div>
 		<div class="panel-body">
-            <!-- Show profile picture
-            <div ng-repeat="user in users" style="float: left">
-                <div ng-if="user.picture">
-                    <img class="img-circle profile-text" ng-src="{{user.picture}}"></img>
-                </div>
-                <div ng-if="!user.picture">
-                    <div class="img-circle profile-text">{{user.username | limitTo: 3}}</div>
-                </div>
-            </div>
-            -->
 
             <div style="display: inline-block">
                 <div style="display: inline-block">
                     <button class="btn badge"
-                            ng-class="{'btn-warning': !isCollapsed}"
-                            ng-repeat="user in attendee"
-                            ng-click="toggleuser(user)" ng-disabled="isCollapsed">{{user.username}}
+                            ng-class="{'btn-warning': !LuncherModel.isCollapsed}"
+                            ng-repeat="user in LuncherModel.attendee()"
+                            ng-click="LuncherModel.toggleuser(user)" ng-disabled="LuncherModel.isCollapsed">{{user.username}}
                     </button>
                 </div>
             </div>
 
-            <div collapse="isCollapsed">
+            <div collapse="LuncherModel.isCollapsed">
                 <div style="text-align: center"><i class="glyphicon glyphicon-sort"></i></div>
                 <div style="display: inline-block">
                     <button class="btn btn-warning badge"
-                            ng-repeat="user in nonattendee"
-                            ng-click="toggleuser(user)">{{user.username}}
+                            ng-repeat="user in LuncherModel.nonattendee()"
+                            ng-click="LuncherModel.toggleuser(user)">{{user.username}}
                     </button>
                 </div>
             </div>
@@ -45,29 +35,45 @@
     <!-- Calculation form -->
 	<div class="panel panel-default" ng-controller="FundController">
         <div class="panel-body">
-            <form class="form-horizontal" >
+            <form class="form-horizontal">
                 <div class="form-group">
                     <div class="row">
                         <div class="col-xs-12">
-                            <div class="input-group input-group-sm">
+                            <div class="input-group">
                                 <span class="input-group-addon">Bill</span>
-                                <input type="number" pattern="\d*" min="0" step="0.01" class="form-control" ng-model="billAmount" ng-change="calcWhenBillChange()" />
+                                <input pattern="\d*" class="form-control"
+                                       placeholder="Enter Amount"
+                                       ng-model="FundModel.billAmount"
+                                       ng-change="FundModel.calcWhenBillChange()"
+                                       currency-formatter />
                             </div>
                             <div class="input-group input-group-sm">
-                                <span class="input-group-addon">Tips</span>
-                                <input type="number" pattern="\d*" min="0" class="form-control" ng-model="tipsAmount" />
+                                <span class="input-group-addon">Tips {{FundModel.tipPercent | number:2}}%</span>
+                                <input pattern="\d*" class="form-control"
+                                       ng-model="FundModel.tipsAmount"
+                                       disabled
+                                       currency-formatter />
                             </div>
                             <div class="input-group input-group-sm">
                                 <span class="input-group-addon">Total</span>
-                                <input type="number" pattern="\d*" min="0" class="form-control" ng-model="totalAmount" />
+                                <input pattern="\d*" class="form-control"
+                                       ng-model="FundModel.totalAmount"
+                                       disabled
+                                       currency-formatter />
                             </div>
                             <div class="input-group input-group-sm">
                                 <span class="input-group-addon">Each Pays</span>
-                                <input type="number" pattern="\d*" min="0" class="form-control" ng-model="eachPays" />
+                                <input pattern="\d*" class="form-control"
+                                       ng-model="FundModel.eachPays"
+                                       disabled
+                                       currency-formatter />
                             </div>
                             <div class="input-group input-group-sm">
                                 <span class="input-group-addon"><i class="glyphicon glyphicon-gift"></i></span>
-                                <input type="number" pattern="\d*" min="0" class="form-control" ng-model="lunchfundAmount" />
+                                <input pattern="\d*" class="form-control"
+                                       ng-model="FundModel.lunchfundAmount"
+                                       disabled
+                                       currency-formatter />
                             </div>
                         </div>
                     </div><!-- /.row -->
@@ -75,35 +81,35 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <div class="input-group input-group-sm">
-                                <select class="form-control" ng-model="fundholder" ng-options="user as user.username for user in attendee">
+                                <select class="form-control"
+                                        ng-model="FundModel.fundholder"
+                                        ng-options="user as user.username for user in LuncherModel.attendee()">
                                     <option value="" selected disabled>Fundholder</option>
                                 </select>
                                 <span class="input-group-btn">
-                                    <button class="btn btn-warning" type="button" ng-disabled="!fundholder">Submit</button>
+                                    <button class="btn btn-warning" type="button"
+                                            ng-disabled="!FundModel.fundholder || !FundModel.billAmount"
+                                            ng-click="FundModel.submit()">Submit</button>
                                 </span>
                             </div><!-- /input-group -->
                         </div>
                     </div><!-- /.row -->
                 </div><!-- /form-group -->
-
             </form>
-
         </div>
     </div><!-- /Calculation form -->
 
     <!-- Past Events -->
-    <div class="panel panel-default" ng-controller="PastEventController as pastEventCtrl">
+    <div class="panel panel-default" ng-controller="EventController">
         <div class="panel-heading">
             Past Events
-            <a href="#browsePastEventsModal" role="button"
-               data-toggle="modal" class="pull-right"><i class="glyphicon glyphicon-edit"></i> More</a>
         </div>
         <div class="panel-body">
             <ul class="list-group">
-                <li class="list-group-item" ng-repeat="event in pastEventCtrl.getPastEvents()">
-                    <span class="badge" style="color: orange;"><i class="glyphicon glyphicon-piggy-bank"></i> {{event.lunchfund}}</span>
-                    <span class="badge">${{event.billAmount}}</span>
-                    {{event.date}}
+                <li class="list-group-item" ng-repeat="event in EventModel.events()">
+                    <span class="badge" style="color: orange;"><i class="glyphicon glyphicon-gift"></i> {{event.fund}}</span>
+                    <span class="badge">${{event.bill}}</span>
+                    {{EventModel.formatTime(event.time)}}
                 </li>
             </ul>
         </div>
@@ -112,7 +118,6 @@
 </div><!--/main-->
 
 <!-- Footer  -->
-<hr>
 <div class="container text-center">
     <p>{{COPYRIGHT_TEXT}}</p>
 </div>
