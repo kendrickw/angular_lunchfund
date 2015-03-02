@@ -13,6 +13,11 @@ var express = require('express'),
 var app_version = require('./package.json').version,
     copyright_text = "Lunchfund 2013, 2015";
 
+if (process.env.NODE_ENV &&
+    process.env.NODE_ENV === "development") {
+    console.log("Development Mode");
+}
+
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
 //   serialize users into and deserialize users out of the session.  Typically,

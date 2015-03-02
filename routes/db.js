@@ -5,6 +5,7 @@
 var Promise = require('bluebird'),
     FormData = require('form-data'),
     credential = require('./config').mysql_credential,
+    development = false,
     knex = require('knex')({
         client: 'mysql',
         connection: {
@@ -28,6 +29,11 @@ var Promise = require('bluebird'),
         lunch_events: "lunch_events",
         lunch_event_lookup: "lunch_event_lookup"
     };
+
+if (process.env.NODE_ENV &&
+    process.env.NODE_ENV === "development") {
+    development = true;
+}
 
 function getLunchers(req, res) {
     // Only get fields that are visible to every user of the app
@@ -108,6 +114,11 @@ function createEventGoogleSpreadsheet(req) {
     form.append(googleEventDate, req.body.time);
 
     return new Promise(function (resolve, reject) {
+        if (development) {
+            console.info("DEV: skip syncing info to GOOGLE spreadsheet");
+            resolve({statusCode: 200});
+        }
+
         form.submit(googleFormPOSTURL, function (err, res) {
             if (err || res.statusCode !== 200) {
                 return reject("GOOGLE spreadsheet update failed: " + err + ":" + res.statusCode);

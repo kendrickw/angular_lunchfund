@@ -1,2 +1,75 @@
-<p>ID: <%= user.email %></p>
-<img src="<%= user.picture %>"></img>
+<!DOCTYPE html>
+<html ng-app="account">
+  <head>
+    <title>Bootstrap 101 Template</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+    <link rel="stylesheet" type="text/css" href="bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="angular-aside/dist/css/angular-aside.min.css" />
+      
+    <link rel="stylesheet" type="text/css" href="css/sidebar.css" />
+
+<body ng-controller="MainCtrl">
+    <div class="jumbotron panel panel-default">
+      <h1>Angular Aside</h1>
+      <p>
+        Off canvas side menu to use with ui-bootstrap. Extends ui-bootstrap's $modal provider.
+      </p>
+      <p>
+        <a href="https://github.com/dbtek/angular-aside" class="btn btn-primary btn-lg" id="downloadbtn">
+          <span class="glyphicon glyphicon-download"></span> Download
+        </a>
+        <br />
+        <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://github.com/dbtek/angular-aside" data-via="dbtek">Tweet</a>
+        <iframe src="http://ghbtns.com/github-btn.html?user=dbtek&repo=angular-aside&type=watch&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="107" height="20"></iframe>
+      </p>
+      <div>
+        <ul class="text-center about-links list-inline">
+          <li class="love">
+            made with <i class="fa fa-heart"></i> by <a href="http://twitter.com/dbtek" onclick="_gaq.push(['_trackEvent', 'Outbound Link', 'View twitter account']);">@dbtek</a>
+          </li>
+          <li class="lab">
+            <i class="fa fa-flask"></i>
+            <a href="https://github.com/dbtek/angular-aside">github project</a>
+          </li>
+          <li class="cypher">
+            <i class="fa fa-code"></i>
+            <a href="http://opensource.org/licenses/MIT">license: MIT</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="jumbotron panel panel-default">
+      <h2>Demo</h2>
+      <p>
+        <span class="pull-left">
+          <button type="button" class="btn btn-default btn-lg" ng-click="openAside('left')">
+            <span class="glyphicon glyphicon-align-justify"></span> Left
+          </button>
+          <button type="button" class="btn btn-default btn-lg" ng-click="openAside('top')">
+            Up <span class="glyphicon glyphicon-arrow-down"></span>
+          </button>
+        </span>
+        <span class="pull-right">
+          <button type="button" class="btn btn-default btn-lg" ng-click="openAside('bottom')">
+            Down <span class="glyphicon glyphicon-arrow-up"></span>
+          </button>
+          <button type="button" class="btn btn-default btn-lg" ng-click="openAside('right')">
+            Right <span class="glyphicon glyphicon-align-justify"></span>
+          </button>
+        </span>
+      </p>
+      <div class="clearfix"></div>
+      <br />
+    </div>
+
+    <script type="text/javascript" src="angular/angular.min.js"></script>
+    <script type="text/javascript" src="angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+    <script type="text/javascript" src="angular-cookies/angular-cookies.min.js"></script>
+    <script type="text/javascript" src="angular-ui-router/release/angular-ui-router.min.js"></script>
+    <script type="text/javascript" src="angular-aside/dist/js/angular-aside.min.js"></script>
+
+    <script type="text/javascript" src="js/account.js"></script>
+    
+  </body>
+</html>

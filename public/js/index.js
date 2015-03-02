@@ -208,8 +208,8 @@
             events: function () { return global.get('events'); }
         };
 
-        var em = $scope.EventModel;
-
+        var em = $scope.EventModel;        
+        
         // Get Past couple lunch events
         $http.get('/db/events', {
             params: {
@@ -219,10 +219,28 @@
             global.set('events', data);
         });
 
+        function ConvertUTCTimeToLocalTime(UTCDateString)
+    {
+        var convertdLocalTime = new Date(UTCDateString);
+
+        var hourOffset = convertdLocalTime.getTimezoneOffset() / 60;
+        console.log('isodate: ' + UTCDateString);
+        console.log('cov:' + convertdLocalTime.toString());
+
+        convertdLocalTime.setHours( convertdLocalTime.getHours() + hourOffset ); 
+
+        var curtime=new Date();
+        console.log('curtime: ' + curtime.toString());
+        console.log('curtime(utc): ' + curtime.toUTCString());
+        
+        return convertdLocalTime;
+    }
+        
         function formatTime(time) {
-            var date = new Date(time),
+            var date = ConvertUTCTimeToLocalTime(time),
                 locale = global.get('locale'),
                 month = date.toLocaleString(locale, { month: "short" });
+            console.log(date.toString());
             return month + "-" + date.getDate();
         }
 
