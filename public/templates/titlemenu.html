@@ -1,0 +1,53 @@
+<nav class="navbar navbar-default">
+    <div class="container">
+
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" ng-init="navCollapsed = true"
+                    ng-click="navCollapsed = !navCollapsed">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="" ng-click="MenuCtrl.openAside('left')"><i class="glyphicon glyphicon-menu-hamburger"></i></a>
+        </div><!-- /navbar-header -->
+
+        <div class="collapse navbar-collapse" ng-class="{in: !navCollapsed}">
+            <p class="navbar-text">{{MenuCtrl.getPage().name}}
+                <span ng-show="MenuCtrl.development"> (dev)</span>
+            </p>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li dropdown>
+                    <a href="#" class="dropdown-toggle" id="nav-profile-link" dropdown-toggle>
+                        <div ng-if="MenuCtrl.loginUser().picture">
+                            <img ng-src="{{MenuCtrl.loginUser().picture}}" class="profile"></img>
+                        </div>
+                        <div ng-if="!MenuCtrl.loginUser().picture" class="profile">
+                            {{MenuCtrl.loginUser().initial}}
+                        </div>
+                    </a>
+                    <ul class="dropdown-menu no-collapse" role="menu">
+                        <li class="dropdown-header">
+                            {{MenuCtrl.loginUser().username}}
+                        </li>
+                        <li class="divider"></li>
+                        <li class="dropdown-header link">
+                            Email: {{MenuCtrl.loginUser().email}}
+                        </li>
+                        <li class="dropdown-header link">
+                            Firstname: {{MenuCtrl.loginUser().firstname}}
+                        </li>
+                        <li class="dropdown-header link">
+                            Lastname: {{MenuCtrl.loginUser().lastname}}
+                        </li>
+                        <li class="divider"></li>
+                        <li class="link">
+                            <a href="/logout">Logout</a>
+                        </li>
+                    </ul><!-- /dropdown-menu -->
+                </li><!-- /dropdown -->
+            </ul><!-- /navbar-right -->
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /container -->
+</nav>

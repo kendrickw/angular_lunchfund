@@ -1,0 +1,11 @@
+<div class="sidemenu">
+	<div class="modal-header">
+    	<h3 class="modal-title" style="text-align:center">
+    		<img src="images/icon-iphone-57.png" style="width: 30px; height: 30px; border-radius:50%"></img>
+    	</h3>
+	</div>
+	<div class="modal-body">
+		<a class="list-group-item" ng-repeat="page in SidemenuCtrl.allPages"
+		   ng-href="{{page.link}}" ng-click="SidemenuCtrl.setPage(page.id); SidemenuCtrl.ok($event);"><span class="menu-icon {{page.icon}}"></span> {{page.name}}</a>
+	</div>
+</div>

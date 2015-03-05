@@ -2,10 +2,10 @@
     "name": "lunchfund",
     "version": "1.0.0",
     "dependencies": {
+        "closure-compiler": "http://dl.google.com/closure-compiler/compiler-latest.zip",
         "angular": "~1.2.0",
-        "angular-cookies": "~1.2.0",
         "angular-bootstrap": "~0.12.0",
-        "angular-ui-router": "^0.2.10",        
+        "angular-ui-router": "^0.2.10",
         "bootstrap": "~3.3.0",
         "angular-aside": "~1.1.0"
     }

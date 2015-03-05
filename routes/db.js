@@ -5,7 +5,8 @@
 var Promise = require('bluebird'),
     FormData = require('form-data'),
     credential = require('./config').mysql_credential,
-    development = false,
+    env = process.env.NODE_ENV || 'development',
+    development = ('development' === env),
     knex = require('knex')({
         client: 'mysql',
         connection: {
@@ -29,11 +30,6 @@ var Promise = require('bluebird'),
         lunch_events: "lunch_events",
         lunch_event_lookup: "lunch_event_lookup"
     };
-
-if (process.env.NODE_ENV &&
-    process.env.NODE_ENV === "development") {
-    development = true;
-}
 
 function getLunchers(req, res) {
     // Only get fields that are visible to every user of the app
@@ -95,6 +91,12 @@ function getLunchEvents(req, res) {
     });
 }
 
+function getFormattedDate(time) {
+    var date = new Date(time),
+        str = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+    return str;
+}
+
 // Create Lunch event (to Googlespreadsheet)
 function createEventGoogleSpreadsheet(req) {
     var googleFormPOSTURL = "https://docs.google.com/forms/d/1hGfAw3GT5YbiTWlNqZhMBAsx2fJ6Jnt5mmhg_8VJLs0/formResponse",
@@ -111,12 +113,12 @@ function createEventGoogleSpreadsheet(req) {
     form.append(googleLunchFund, req.body.fund);
     form.append(googleFundHolder, req.body.fundholder.username);
     form.append(googleSubmitter, req.body.submitter.username);
-    form.append(googleEventDate, req.body.time);
+    form.append(googleEventDate, getFormattedDate(req.body.time));
 
     return new Promise(function (resolve, reject) {
         if (development) {
             console.info("DEV: skip syncing info to GOOGLE spreadsheet");
-            resolve({statusCode: 200});
+            return resolve({statusCode: 200});
         }
 
         form.submit(googleFormPOSTURL, function (err, res) {
@@ -215,10 +217,38 @@ function getLunchersWithoutGmail() {
     return knex(tbl.lunchers).whereNull('email');
 }
 
+// Get a list of top lunchers
+function getTopLunchers() {
+    return knex(tbl.lunch_event_lookup)
+        .select(knex.raw('luncher_id, count(*) as meal_count'))
+        .groupBy('luncher_id')
+        .having('meal_count', '>', 1)
+        .orderBy('meal_count', 'desc');
+}
+
+// Get total statistics
+function getTotalStat() {
+    return knex(tbl.lunch_events)
+        .sum('fund as fundtotal')
+        .sum('totalpaid as mealtotal');
+}
+
+// Get fundholder statistics
+function getFundholderStat() {
+    return knex(tbl.lunch_events)
+        .select(knex.raw('fundholder, sum(fund) as funds'))
+        .groupBy('fundholder')
+        .having('funds', '>', 0)
+        .orderBy('funds', 'desc');
+}
+
 module.exports = {
     // APIs for internal use
     refreshLuncherRecord: refreshLuncherRecord,
     getLunchersWithoutGmail: getLunchersWithoutGmail,
+    getTopLunchers: getTopLunchers,
+    getTotalStat: getTotalStat,
+    getFundholderStat: getFundholderStat,
 
     // REST APIs
     getLunchers: getLunchers,

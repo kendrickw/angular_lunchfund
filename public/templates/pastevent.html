@@ -1,0 +1,14 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Past Events
+    </div>
+    <div class="panel-body">
+        <ul class="list-group">
+            <li class="list-group-item" ng-repeat="event in EventCtrl.events() track by event.id">
+                <span class="badge" style="color: orange;"><i class="glyphicon glyphicon-piggy-bank"></i> {{event.fund}}</span>
+                <span class="badge">${{event.bill}}</span>
+                {{event.time | date : 'MMM-dd'}}
+            </li>
+        </ul>
+    </div>
+</div>

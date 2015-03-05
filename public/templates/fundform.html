@@ -1,0 +1,99 @@
+<div class="panel panel-default">
+    <div class="panel-body">
+        <form class="form-horizontal" ng-submit="FundCtrl.submit()">
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <p class="input-group">
+                        <input type="text" class="form-control" ng-model="FundCtrl.eventdate"
+                               max-date="{{FundCtrl.today}}" show-button-bar="false"
+                               datepicker-options="FundCtrl.dateOptions"
+                               datepicker-popup="yyyy-MMM-dd" is-open="FundCtrl.dateOpened" disabled required/>
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="FundCtrl.dateOpen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="input-group">
+                        <span class="input-group-addon">Bill</span>
+                        <input type="number" min="0" step="0.01" pattern="[\d\.]*" class="form-control"
+                               placeholder="Enter Amount"
+                               ng-model="FundCtrl.billAmount"
+                               required/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="btn-group-sm btn-group-justified" role="group">
+                        <a href class="btn" style="text-align:right; color:black" disabled>
+                            Tips ({{FundCtrl.tipPercent | number:2}}%)
+                        </a>
+                        <a href class="btn" style="text-align:left; color:black" disabled>
+                            ${{FundCtrl.tipsAmount | number:2}}
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-xs-12">
+                    <div class="btn-group-sm btn-group-justified" role="group">
+                        <a href class="btn" style="text-align:right; color:black" disabled>
+                            Total
+                        </a>
+                        <a href class="btn" style="text-align:left; color:black" disabled>
+                            ${{FundCtrl.totalAmount | number:2}}
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-xs-12">
+                    <div class="btn-group-sm btn-group-justified" role="group">
+                        <a href class="btn" style="text-align:right; color:black" disabled>
+                            Each Pays
+                        </a>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn-xs btn-default">
+                                ${{FundCtrl.eachPays | number:2}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12">
+                    <div class="btn-group-sm btn-group-justified" role="group">
+                        <a href class="btn" style="text-align:right; color:orange" disabled>
+                            Lunchfund <i class="glyphicon glyphicon-piggy-bank"></i>
+                        </a>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn-xs btn-default">
+                                ${{FundCtrl.getLunchfundAmount() | number:2}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /row -->
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="input-group input-group">
+                        <select class="form-control"
+                                ng-model="FundCtrl.fundholder"
+                                ng-options="user as user.username for user in FundCtrl.attendee()" required>
+                            <option value="" selected disabled>Fundholder</option>
+                        </select>
+                        <span class="input-group-btn">
+                            <button class="btn btn-warning" type="submit">Submit</button>
+                        </span>
+                    </div><!-- /input-group -->
+                </div>
+            </div><!-- /.row -->
+        </form>
+
+        <alert ng-repeat="alert in FundCtrl.alert.getAlerts()" type="{{alert.type}}" close="FundCtrl.alert.closeAlert($index)">{{alert.msg}}</alert>
+    </div>
+</div>

@@ -1,27 +1,39 @@
 {
-    "name": "LunchFund",
-    "version": "1.0.0",
-    "private": true,
-    "scripts": {
-        "start": "node app.js"
-    },
-    "license" : "MIT",
-    "devDependencies": {
-        "grunt": "~0.4.5",
-        "grunt-contrib-less": "~0.11.0",
-        "grunt-contrib-watch": "~0.6.1",
-        "jit-grunt": "~0.7.0"
-    },
-    "dependencies": {
-        "express": "3.2.x",
-        "ejs": "1.0.x",
-        "passport": "*",
-        "passport-google-oauth": "*",
-        "knex": "*",
-        "mysql": "*",
-        "request": "2.48.x",
-        "async": "0.9.x",
-        "bluebird": "*",
-        "form-data": "*"
-    }
+  "name": "LunchFund",
+  "version": "2.0.0",
+  "license": "MIT",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kendrickw/angular_lunchfund.git"
+  },
+  "devDependencies": {
+    "del": "^1.1.1",
+    "gulp": "^3.8.11",
+    "gulp-closure-compiler": "^0.2.17",
+    "gulp-concat": "^2.5.2",
+    "gulp-html-replace": "^1.4.4",
+    "gulp-less": "^3.0.1",
+    "gulp-minify-css": "^0.5.1",
+    "merge-stream": "^0.1.7"
+  },
+  "dependencies": {
+    "async": "^0.9.0",
+    "bluebird": "^2.9.13",
+    "body-parser": "^1.12.0",
+    "cookie-parser": "^1.3.4",
+    "ejs": "^2.3.1",
+    "express": "^4.12.2",
+    "express-session": "^1.10.3",
+    "form-data": "^0.2.0",
+    "knex": "^0.7.4",
+    "morgan": "^1.5.1",
+    "mysql": "^2.5.5",
+    "passport": "^0.2.1",
+    "passport-google-oauth": "^0.1.5",
+    "request": "^2.53.0",
+    "serve-favicon": "^2.2.0"
+  }
 }
