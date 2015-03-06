@@ -9,7 +9,6 @@
     app.factory('global', [ '$window', '$http', function ($window, $http) {
         var property = {
             locale: navigator.languages ? navigator.languages[0] : (navigator.language || navigator.userLanguage),
-            currentPageID: 0,
             development: $window.development,       // Is in development mode?
             loginUser: $window.currentuser,
             lunchers: [],

@@ -3,47 +3,21 @@
 /****************************
  * css related to side menu *
  ****************************/
+.sidemenu{
+    position: fixed;
+    top: 55px;
+    left: -55px;
+    z-index: 999;
 
-/* Disable default bootstrap modal animation, so the
- * side menu would animate properly
- */
- /*
- .modal.fade .modal-dialog,
- .modal.in .modal-dialog {
-    -webkit-transform: translate(0, 0);
-    -ms-transform: translate(0, 0);
-    transform: translate(0, 0);
-}
-*/
-
-/* background of side menu */
-.ng-aside.horizontal .modal-dialog .modal-content {
-    background: slategrey;
+    -webkit-transition: all 500ms ;
+    -moz-transition: all 500ms ;
+    -ms-transition: all 500ms ;
+    -o-transition: all 500ms ;
+    transition: all 500ms ;
 }
 
-.sidemenu .modal-body {
-    padding: 0px;
-}
-
-.sidemenu .list-group-item:first-child {
-  border-top-right-radius: 0px;
-  border-top-left-radius: 0px;
-}
-.sidemenu .list-group-item:last-child {
-  margin-bottom: 0;
-  border-bottom-right-radius: 0px;
-  border-bottom-left-radius: 0px;
-}
-.sidemenu a.list-group-item {
-  color: black;
-  background: slategrey;
-  border: 0px;
-}
-.sidemenu a.list-group-item:hover,
-.sidemenu a.list-group-item:focus {
-  text-decoration: none;
-  color: black;
-  background-color: darkgrey;
+.sidemenu.open{
+  left:0;
 }
 
 /****************************
@@ -60,32 +34,8 @@ body {
 }
 
 /****************************
- * Multiselection box       *
+ * Nav bar                  *
  ****************************/
-multiselect {
-    display:block;
-}
-multiselect .btn {
-    width: 100%;
-    background-color: #FFF;
-}
-multiselect .btn.error{
-    border: 1px solid #da4f49 !important;
-}
-multiselect .dropdown-menu {
-    max-height: 300px;
-    overflow-y: auto;
-}
-multiselect .dropdown-menu {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 2px;
-}
-multiselect .dropdown-menu > li > a {
-    padding: 3px 10px;
-    cursor:pointer;
-}
-
 
 /* Profile picture/text */
 #nav-profile-link {

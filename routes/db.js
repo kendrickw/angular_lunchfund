@@ -33,7 +33,9 @@ var Promise = require('bluebird'),
 
 function getLunchers(req, res) {
     // Only get fields that are visible to every user of the app
-    var query = knex(tbl.lunchers).select('id', 'username', 'firstname', 'lastname', 'picture');
+    var query = knex(tbl.lunchers)
+        .select('id', 'username', 'firstname', 'lastname', 'picture')
+        .orderBy('id');
 
     if (req.query.email) {
         query.where({
@@ -90,6 +92,60 @@ function getLunchEvents(req, res) {
         res.send(error);
     });
 }
+
+// Get lunchfund statistics (fund contribution per person, meal contribution, etc..)
+/** SELECT luncher_id, sum(meal_cost), sum(fund_contrib)
+    FROM lunch_event_lookup
+    LEFTJOIN (
+        SELECT id, (totalpaid/user_count) as meal_cost, (fund/user_count) as fund_contrib
+        FROM (
+            SELECT id, totalpaid, fund, count(*) as user_count
+            FROM lunch_event_lookup
+            LEFTJOIN lunch_events
+            ON id=lunch_event_id
+            GROUP BY id
+        ) as count_tbl
+    ) as contrib_tbl
+    ON id=lunch_event_id
+    GROUP BY luncher_id
+**/
+// ?id=# to get stat for specific luncher
+function getLuncherStat(req, res) {
+    var query = knex.select(knex.raw('luncher_id, sum(meal_cost) as total_meal_cost, sum(fund_contrib) as total_fund_contrib'))
+        .from(function () {
+            // For each lunch event, calculate the per person contribution (meal_cost, fund_contrib, etc..)
+            this.select(knex.raw('id, (totalpaid/user_count) as meal_cost, (fund/user_count) as fund_contrib'))
+                .from(function () {
+                    // For each lunch event, get number of people (user_count) on each event
+                    this.select(knex.raw('id, totalpaid, fund, count(*) as user_count'))
+                        .from(tbl.lunch_event_lookup)
+                        .leftJoin(tbl.lunch_events, function () {
+                            this.on('id', '=', 'lunch_event_id');
+                        })
+                        .groupBy('id')
+                        .as('count_tbl');
+                }).as('contrib_tbl');
+        })
+        .leftJoin(tbl.lunch_event_lookup, function () {
+            this.on('id', '=', 'lunch_event_id');
+            // ?id=# : luncher ID to query
+            if (req.query.id) {
+                this.on('luncher_id', parseInt(req.query.id, 10));
+            }
+        });
+
+    if (!req.query.id) {
+        query.groupBy('luncher_id');
+    }
+
+    query.then(function (rows) {
+        res.json(rows);
+    })['catch'](function (error) {
+        res.status(400);
+        res.send(error);
+    });
+}
+
 
 function getFormattedDate(time) {
     var date = new Date(time),
@@ -254,5 +310,6 @@ module.exports = {
     getLunchers: getLunchers,
     updateLuncher: updateLuncher,
     getLunchEvents: getLunchEvents,
-    createEvent: createEvent
+    createEvent: createEvent,
+    getLuncherStat: getLuncherStat
 };

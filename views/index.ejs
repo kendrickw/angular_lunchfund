@@ -2,12 +2,13 @@
 <html ng-app="index">
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <title>Lunchfund</title>
 
         <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
         <link rel="icon" href="images/favicon.ico" type="image/x-icon">
 
         <link rel="stylesheet" type="text/css" href="bootstrap/dist/css/bootstrap.min.css" />
-        <link rel="stylesheet" type="text/css" href="angular-aside/dist/css/angular-aside.min.css" />
+        <link rel="stylesheet" type="text/css" href="angular-loading-bar/build/loading-bar.css" />
 
         <!-- build:css -->
         <link rel="stylesheet" type="text/css" href="css/index/site.css" />
@@ -24,7 +25,6 @@
             var development=<%- DEVMODE %>;
         </script>
 
-        <!-- Brand and toggle get grouped for better mobile display -->
         <div title-menu></div>
 
         <!-- Main Content -->
@@ -32,8 +32,10 @@
 
         <script type="text/javascript" src="angular/angular.min.js"></script>
         <script type="text/javascript" src="angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+        <script type="text/javascript" src="angular-loading-bar/build/loading-bar.min.js"></script>
         <script type="text/javascript" src="angular-ui-router/release/angular-ui-router.min.js"></script>
-        <script type="text/javascript" src="angular-aside/dist/js/angular-aside.min.js"></script>
+
+        <script type="text/javascript" src="angular-google-chart/ng-google-chart.js"></script>
 
         <!-- build:commonjs -->
         <script type="text/javascript" src="js/common/alertService.js"></script>
@@ -47,6 +49,7 @@
         <script type="text/javascript" src="js/index/fundForm.js"></script>
         <script type="text/javascript" src="js/index/pastEvent.js"></script>
         <script type="text/javascript" src="js/index/copyright.js"></script>
+        <script type="text/javascript" src="js/index/fundchart.js"></script>
         <!-- endbuild -->
 
     </body>

@@ -3,13 +3,13 @@
 "use strict";
 
 (function () {
-    var app = angular.module('titleMenu', ['ngAside', 'globalFactory']);
+    var app = angular.module('titleMenu', ['globalFactory']);
 
     app.directive('titleMenu', function () {
         return {
             scope: {},
             restrict: 'AE',
-            templateUrl: 'templates/titleMenu.html',
+            templateUrl: 'templates/titlemenu.html',
             replace: true,
             controller: 'MenuController',
             controllerAs: 'MenuCtrl'
@@ -36,62 +36,52 @@
         link: "#/setting"
     } ];
 
-    app.controller('MenuController', [ '$aside', 'global', function ($aside, global) {
+    app.controller('MenuController', [ '$location', 'global', function ($location, global) {
         var me = this;
 
         angular.extend(me, {
             allPages: allPages,
             development: global.get('development'),
-            currentPageID: function () { return global.get('currentPageID'); },
-            loginUser: function () { return global.get('loginUser'); }
+            currentPageID: 0,
+            loginUser: function () { return global.get('loginUser'); },
+            navCollapsed: true,  // Navigation responsive collapse
+            sidemenuOpen: false  // Side menu state
         });
+
+        // Update current page ID, base on hash location
+        var k,
+            regex = new RegExp($location.path() + "$");
+        for (k = 0; k < allPages.length; k += 1) {
+            if (regex.test(allPages[k].link)) {
+                me.currentPageID = allPages[k].id;
+                break;
+            }
+        }
 
         // Page selection control
         function getPage() {
-            return me.allPages[me.currentPageID()];
+            return me.allPages[me.currentPageID];
         }
-
-        function openAside(position) {
-            $aside.open({
-                templateUrl: 'templates/sidemenu.html',
-                placement: position,
-                size: 'sm',
-                backdrop: true,  // Clicking outside the modal, closes the modal
-                controller: 'SidemenuController',
-                controllerAs: 'SidemenuCtrl'
-            });
-        }
-
-        angular.extend(me, {
-            openAside: openAside,
-            getPage: getPage
-        });
-
-    }]);
-
-    app.controller('SidemenuController', [ 'global', '$modalInstance', function (global, $modalInstance) {
-        var me = this;
 
         function setPage(id) {
-            global.set('currentPageID', id || 0);
+            me.currentPageID = id || 0;
         }
 
-        function ok(e) {
-            $modalInstance.close();
-            e.stopPropagation();
+        function toggleNav() {
+            me.navCollapsed = !me.navCollapsed;
         }
 
-        function cancel(e) {
-            $modalInstance.dismiss();
-            e.stopPropagation();
+        function toggleSidemenu() {
+            me.sidemenuOpen = !me.sidemenuOpen;
         }
 
         angular.extend(me, {
-            ok: ok,
-            cancel: cancel,
-            allPages: allPages,
+            toggleNav: toggleNav,
+            toggleSidemenu: toggleSidemenu,
+            getPage: getPage,
             setPage: setPage
         });
+
     }]);
 
 }());

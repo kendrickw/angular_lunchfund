@@ -138,7 +138,7 @@ if (development) {
 //   login page.
 function ensureGoogleAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
-        return next();
+        next();
     } else {
         res.redirect('/login');
     }
@@ -195,6 +195,7 @@ app.get('/db/lunchers', ensureAuthenticated, db.getLunchers);
 app.put('/db/luncher/:id', ensureGoogleAuthenticated, db.updateLuncher);
 app.get('/db/events', ensureAuthenticated, db.getLunchEvents);
 app.post('/db/event', ensureAuthenticated, db.createEvent);
+app.get('/db/luncherstat', ensureAuthenticated, db.getLuncherStat);
 
 
 // Main application endpoints
@@ -213,6 +214,7 @@ app.get('/login', function (req, res) {
     });
 });
 
+/*
 db.getTopLunchers().then(function (rows) {
     console.log(rows);
 });
@@ -222,6 +224,7 @@ db.getTotalStat().then(function (total) {
 db.getFundholderStat().then(function (fundstat) {
     console.log(fundstat);
 });
+*/
 
 app.get('/logout', function (req, res) {
     req.logout();

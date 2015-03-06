@@ -1,12 +1,19 @@
 {
-    "name": "lunchfund",
-    "version": "1.0.0",
-    "dependencies": {
-        "closure-compiler": "http://dl.google.com/closure-compiler/compiler-latest.zip",
-        "angular": "~1.2.0",
-        "angular-bootstrap": "~0.12.0",
-        "angular-ui-router": "^0.2.10",
-        "bootstrap": "~3.3.0",
-        "angular-aside": "~1.1.0"
-    }
+  "name": "LunchFund",
+  "dependencies": {
+    "closure-compiler": "http://dl.google.com/closure-compiler/compiler-latest.zip",
+    "angular": "~1.2.0",
+    "angular-bootstrap": "~0.12.0",
+    "angular-ui-router": "^0.2.10",
+    "bootstrap": "~3.3.0",
+    "angular-aside": "~1.1.0",
+    "angular-loading-bar": "~0.7.1",
+    "d3": "~3.3.13",
+    "nvd3": "~1.7.1",
+    "angular-nvd3": "~0.1.1",
+    "angular-google-chart": "~0.0.11"
+  },
+  "resolutions": {
+    "nvd3": "~1.7.1"
+  }
 }
