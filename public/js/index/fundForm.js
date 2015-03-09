@@ -9,7 +9,7 @@
         return {
             scope: {},
             restrict: 'AE',
-            templateUrl: 'templates/fundform.html',
+            templateUrl: 'templates/fund-form.html',
             replace: true,
             controller: 'FundController',
             controllerAs: 'FundCtrl'
@@ -17,7 +17,10 @@
     });
 
     app.controller('FundController', [ '$http', 'global', 'alert', function ($http, global, alert) {
-        var me = this;
+        var me = this,
+            lunchfundAmount = 0,
+            tipPercent = 10,
+            tipExact = false;  // Exact Tip Percentage enforced?
 
         angular.extend(me, {
             alert: alert,
@@ -37,9 +40,6 @@
             }
         });
 
-        var lunchfundAmount = 0,
-            tipPercent = 10;           // Tip percentage
-
         // Date picker dialog
         function dateOpen($event) {
             $event.preventDefault();
@@ -52,7 +52,11 @@
                 return;
             }
 
-            me.totalAmount = Math.ceil(me.billAmount * (1 + tipPercent / 100));
+            if (tipExact) {
+                me.totalAmount = me.billAmount * (1 + tipPercent / 100);
+            } else {
+                me.totalAmount = Math.ceil(me.billAmount * (1 + tipPercent / 100));
+            }
             me.tipsAmount = me.totalAmount - me.billAmount;
             me.tipPercent = me.tipsAmount / me.billAmount * 100;
 
@@ -68,6 +72,12 @@
         function getLunchfundAmount() {
             calculateLunchFund();
             return lunchfundAmount;
+        }
+
+        function changeTips(val, exact) {
+            tipPercent = val;
+            tipExact = exact;
+            calculateLunchFund();
         }
 
         function verifysubmit() {
@@ -96,6 +106,7 @@
                 fundholder: me.fundholder,
                 submitter: global.get('loginUser')
             };
+
             if (!verifysubmit()) {
                 return;
             }
@@ -111,6 +122,7 @@
         angular.extend(me, {
             dateOpen: dateOpen,
             getLunchfundAmount: getLunchfundAmount,
+            changeTips: changeTips,
             submit: submit
         });
     }]);

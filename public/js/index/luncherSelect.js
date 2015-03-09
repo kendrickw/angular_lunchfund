@@ -9,7 +9,7 @@
         return {
             scope: {},
             restrict: 'AE',
-            templateUrl: 'templates/luncherselect.html',
+            templateUrl: 'templates/luncher-select.html',
             replace: true,
             controller: 'LuncherController',
             controllerAs: 'LuncherCtrl'

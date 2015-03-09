@@ -9,7 +9,7 @@
         return {
             scope: {},
             restrict: 'AE',
-            templateUrl: 'templates/pastevent.html',
+            templateUrl: 'templates/past-event.html',
             replace: true,
             controller: 'EventController',
             controllerAs: 'EventCtrl'

@@ -9,7 +9,7 @@
         return {
             scope: {},
             restrict: 'AE',
-            templateUrl: 'templates/titlemenu.html',
+            templateUrl: 'templates/title-menu.html',
             replace: true,
             controller: 'MenuController',
             controllerAs: 'MenuCtrl'

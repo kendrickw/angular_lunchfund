@@ -14,7 +14,8 @@ var Promise = require('bluebird'),
             user: credential.username,
             password : credential.password,
             port : credential.port,
-            database: credential.name
+            database: credential.name,
+            timezone: "UTC"
         },
 
         // This is a clearDB limitation for now. (Do not use more than 3 connections)
@@ -160,9 +161,9 @@ function createEventGoogleSpreadsheet(req) {
         googleLunchFund = "entry_1892695599",
         googleFundHolder = "entry.960282559",
         googleSubmitter = "entry_1745174688",
-        googleEventDate = "entry_472715279";
+        googleEventDate = "entry_472715279",
+        form = new FormData();
 
-    var form = new FormData();
     req.body.attendee.map(function (entry) {
         form.append(googleAttendee, entry.username);
     });
@@ -199,7 +200,6 @@ function createEvent(req, res) {
         return res.send("createEvent: Malformed body: " + JSON.stringify(req.body));
     }
 
-
     knex.transaction(function (trx) {
         return trx
             .select('time', 'bill', 'totalpaid', 'fund')
@@ -214,7 +214,6 @@ function createEvent(req, res) {
                     return Promise.reject("createEvent: Duplicate Entry exists in DB.");
                 }
 
-                //TODO: change time format to 2015-2-26
                 var entry = {
                     rest_id: 0,
                     time: req.body.time,

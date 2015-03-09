@@ -2,8 +2,11 @@
     <div class="panel-heading">
         <span class="badge">{{LuncherCtrl.attendee().length}} lunchers</span>
 
-        <a role="button" class="pull-right"
-           ng-click="LuncherCtrl.toggleEdit()"><i class="glyphicon glyphicon-edit"></i> Edit</a>
+        <a role="button" href style="text-decoration: none" class="pull-right"
+           ng-click="LuncherCtrl.toggleEdit()">
+            <span ng-hide="LuncherCtrl.editMode"><i class="glyphicon glyphicon-collapse-down"></i> Edit</span>
+            <span ng-show="LuncherCtrl.editMode"><i class="glyphicon glyphicon-collapse-up"></i> Done</span>
+        </a>
     </div>
     <div class="panel-body">
 

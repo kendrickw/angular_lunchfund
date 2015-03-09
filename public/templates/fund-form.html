@@ -28,55 +28,50 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-xs-12">
-                    <div class="btn-group-sm btn-group-justified" role="group">
-                        <a href class="btn" style="text-align:right; color:black" disabled>
-                            Tips ({{FundCtrl.tipPercent | number:2}}%)
-                        </a>
-                        <a href class="btn" style="text-align:left; color:black" disabled>
-                            ${{FundCtrl.tipsAmount | number:2}}
-                        </a>
+            <div class="well">
+                <div class="row" style="line-height: 2">
+                    <div class="col-xs-5 text-right">Tips ({{FundCtrl.tipPercent | number:2}}%)</div>
+                    <div class="col-xs-3">${{FundCtrl.tipsAmount | number:2}}</div>
+                    <div class="col-xs-4 btn-group-sm text-right">
+                        <button class="btn btn-default" type="button"
+                                ng-show="FundCtrl.tipPercent"
+                                ng-click="FundCtrl.changeTips(0, true)">
+                            <i class="glyphicon glyphicon-remove-circle"></i> no tips
+                        </button>
+                        <button class="btn btn-default" type="button"
+                                ng-hide="FundCtrl.tipPercent"
+                                ng-click="FundCtrl.changeTips(10, false)">
+                            <i class="glyphicon glyphicon-plus"></i> 10% tips
+                        </button>
                     </div>
                 </div>
 
-                <div class="col-xs-12">
-                    <div class="btn-group-sm btn-group-justified" role="group">
-                        <a href class="btn" style="text-align:right; color:black" disabled>
-                            Total
-                        </a>
-                        <a href class="btn" style="text-align:left; color:black" disabled>
-                            ${{FundCtrl.totalAmount | number:2}}
-                        </a>
+                <div class="row" style="line-height: 2">
+                    <div class="col-xs-5 text-right">Total</div>
+                    <div class="col-xs-3">${{FundCtrl.totalAmount | number:2}}</div>
+                    <div class="col-xs-4 btn-group-sm text-right"></div>
+                </div>
+
+                <div class="row" style="line-height: 2">
+                    <div class="col-xs-5 text-right">Each Pays</div>
+                    <div class="col-xs-3">${{FundCtrl.eachPays | number:2}}</div>
+                    <div class="col-xs-4 btn-group-sm text-right">
+                        <button class="btn btn-default" type="button" >
+                            <i class="glyphicon glyphicon-edit"></i> Edit
+                        </button>
                     </div>
                 </div>
 
-                <div class="col-xs-12">
-                    <div class="btn-group-sm btn-group-justified" role="group">
-                        <a href class="btn" style="text-align:right; color:black" disabled>
-                            Each Pays
-                        </a>
-                        <div class="btn-group" role="group">
-                            <button type="button" class="btn-xs btn-default">
-                                ${{FundCtrl.eachPays | number:2}}
-                            </button>
-                        </div>
+                <div class="row" style="line-height: 2">
+                    <div class="col-xs-5 text-right">Lunchfund <i style="color:orange" class="glyphicon glyphicon-piggy-bank">  </i></div>
+                    <div class="col-xs-3">${{FundCtrl.getLunchfundAmount() | number:2}}</div>
+                    <div class="col-xs-4 btn-group-sm text-right">
+                        <button class="btn btn-default" type="button" >
+                            <i class="glyphicon glyphicon-edit"></i> Edit
+                        </button>
                     </div>
                 </div>
-
-                <div class="col-xs-12">
-                    <div class="btn-group-sm btn-group-justified" role="group">
-                        <a href class="btn" style="text-align:right; color:orange" disabled>
-                            Lunchfund <i class="glyphicon glyphicon-piggy-bank"></i>
-                        </a>
-                        <div class="btn-group" role="group">
-                            <button type="button" class="btn-xs btn-default">
-                                ${{FundCtrl.getLunchfundAmount() | number:2}}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div><!-- /row -->
+            </div><!-- /well -->
 
             <div class="row">
                 <div class="col-xs-12">

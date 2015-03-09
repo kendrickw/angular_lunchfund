@@ -9,7 +9,7 @@
         return {
             scope: {},
             restrict: 'AE',
-            templateUrl: 'templates/fundchart.html',
+            templateUrl: 'templates/fund-chart.html',
             replace: true,
             controller: 'FundChartController',
             controllerAs: 'FundChartCtrl'
@@ -19,9 +19,9 @@
     app.controller('FundChartController', [ '$http', '$filter', 'global', function ($http, $filter, global) {
         var me = this,
             lunchers = global.get('lunchers'),
-            loginUser = global.get('loginUser');
+            loginUser = global.get('loginUser'),
+            fundchart = {};
 
-        var fundchart = {};
         fundchart.type = "BarChart";
         fundchart.cssStyle = "";
         fundchart.data = {
