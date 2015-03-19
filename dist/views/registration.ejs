@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html ng-app="registration">
     <head>
-        <title>LunchFund App Registration</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-        <link rel="stylesheet" type="text/css" href="bootstrap/dist/css/bootstrap.min.css" />
+        <title>LunchFund Registration</title>
 
-        <link rel="stylesheet" type="text/css" href="css/registration.min.css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+        <link rel="stylesheet" href="../css/registration.min.css">
     </head>
 
     <body ng-controller="RegController">
+        <!-- Prevent external link from opening a new safari window -->
+        <script>(function(a,b,c){if(c in b&&b[c]){var d,e=a.location,f=/^(a|html)$/i;a.addEventListener("click",function(a){d=a.target;while(!f.test(d.nodeName))d=d.parentNode;"href"in d&&(d.href.indexOf("http")||~d.href.indexOf(e.host))&&(a.preventDefault(),e.href=d.href)},!1)}})(document,window.navigator,"standalone")</script>
 
         <!-- Pass Node.js variables into HTML page -->
         <script type="text/javascript">
@@ -22,14 +27,16 @@
 
                     <div class="masthead clearfix">
                         <div class="inner">
-                            <img src="images/icon-iphone-114.png"
+                            <img src="images/lunchfund-icon.png"
+                                 height="50"
+                                 width="50"
                                  alt="Lunchfund Logo" class="img-center"></img>
                         </div>
                     </div>
 
                     <div class="inner cover">
 
-                        <form>
+                        <form ng-submit="register($event)">
                             <div class="form-group">
                                 <label for="luncher">Register <code>{{email}}</code> with:</label>
                                 <select class="form-control" id="luncher"
@@ -37,15 +44,15 @@
                                         ng-options="user as user.username for user in lunchers">
                                 </select>
                             </div>
-                            <button type="submit" class="btn btn-primary"
-                                        ng-click="register(selected)">Register as {{selected.username}}</button>
+                            <br/>
+                            <button type="submit" class="btn btn-primary">Register as {{selected.username}}</button>
                         </form>
 
                     </div>
 
                     <div class="mastfoot">
                         <div class="inner">
-                            <p><%- COPYRIGHT_TEXT %></p>
+                            <p><%- COPYRIGHT_TEXT %> (v<%- VERSION %>)</p>
                         </div>
                     </div>
 
@@ -53,9 +60,8 @@
             </div> <!-- site-wrapper-inner -->
         </div> <!-- site-wrapper -->
 
-        <script type="text/javascript" src="angular/angular.min.js"></script>
-        <script type="text/javascript" src="angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
 
-        <script type="text/javascript" src="js/registration.min.js"></script>
+        <script src="../js/registration.min.js"></script>
     </body>
 </html>

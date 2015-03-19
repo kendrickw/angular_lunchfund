@@ -29,7 +29,9 @@ var Promise = require('bluebird'),
         lunchers: "lunchers",
         restaurants: "restaurants",
         lunch_events: "lunch_events",
-        lunch_event_lookup: "lunch_event_lookup"
+        lunch_event_lookup: "lunch_event_lookup",
+        stocks: "stocks",
+        stock_events: "stock_events"
     };
 
 function getLunchers(req, res) {
@@ -95,14 +97,14 @@ function getLunchEvents(req, res) {
 }
 
 // Get lunchfund statistics (fund contribution per person, meal contribution, etc..)
-/** SELECT luncher_id, sum(meal_cost), sum(fund_contrib)
+/** SELECT luncher_id, sum(meal_cost), sum(fund_contrib), count(*) as meal_count
     FROM lunch_event_lookup
-    LEFTJOIN (
+    LEFT JOIN (
         SELECT id, (totalpaid/user_count) as meal_cost, (fund/user_count) as fund_contrib
         FROM (
             SELECT id, totalpaid, fund, count(*) as user_count
             FROM lunch_event_lookup
-            LEFTJOIN lunch_events
+            LEFT JOIN lunch_events
             ON id=lunch_event_id
             GROUP BY id
         ) as count_tbl
@@ -112,7 +114,7 @@ function getLunchEvents(req, res) {
 **/
 // ?id=# to get stat for specific luncher
 function getLuncherStat(req, res) {
-    var query = knex.select(knex.raw('luncher_id, sum(meal_cost) as total_meal_cost, sum(fund_contrib) as total_fund_contrib'))
+    var query = knex.select(knex.raw('luncher_id, sum(meal_cost) as total_meal_cost, sum(fund_contrib) as total_fund_contrib, count(*) as meal_count'))
         .from(function () {
             // For each lunch event, calculate the per person contribution (meal_cost, fund_contrib, etc..)
             this.select(knex.raw('id, (totalpaid/user_count) as meal_cost, (fund/user_count) as fund_contrib'))
@@ -147,6 +149,20 @@ function getLuncherStat(req, res) {
     });
 }
 
+function getFundholderStat(req, res) {
+    var query = knex(tbl.lunch_events)
+        .select(knex.raw('fundholder, sum(fund) as funds'))
+        .groupBy('fundholder')
+        .having('funds', '>', 0)
+        .orderBy('funds', 'desc');
+
+    query.then(function (rows) {
+        res.json(rows);
+    })['catch'](function (error) {
+        res.status(400);
+        res.send(error);
+    });
+}
 
 function getFormattedDate(time) {
     var date = new Date(time),
@@ -253,6 +269,44 @@ function createEvent(req, res) {
 
 }
 
+// Get stock watch list
+function getStockList(req, res) {
+    var query = knex(tbl.stocks).orderBy('id');
+
+    query.then(function (rows) {
+        res.json(rows);
+    })['catch'](function (error) {
+        res.status(400);
+        res.send(error);
+    });
+}
+
+// Add stock to stock watch list
+function addStockList(req, res) {
+    if (!req.body ||
+            !req.body.hasOwnProperty('symbol') ||
+            !req.body.hasOwnProperty('exchange')) {
+        res.status(400);
+        return res.send("createEvent: Malformed body: " + JSON.stringify(req.body));
+    }
+
+    /*
+    knex.transaction(function (trx) {
+
+    }).then(function (response) {
+        // response contains reply from google spreadsheet
+        res.send();
+    })['catch'](function (error) {
+        // If we get here, that means that neither the 'Old Books' catalogues insert,
+        // nor any of the books inserts will have taken place.
+        res.status(400);
+        res.send(error);
+    });
+    */
+    res.send();
+}
+
+
 // Check lunchfund database for record with given email
 // If exists, update lunchfund record with current profile information.
 // Promise contains number of records obtained/updated.
@@ -272,43 +326,18 @@ function getLunchersWithoutGmail() {
     return knex(tbl.lunchers).whereNull('email');
 }
 
-// Get a list of top lunchers
-function getTopLunchers() {
-    return knex(tbl.lunch_event_lookup)
-        .select(knex.raw('luncher_id, count(*) as meal_count'))
-        .groupBy('luncher_id')
-        .having('meal_count', '>', 1)
-        .orderBy('meal_count', 'desc');
-}
-
-// Get total statistics
-function getTotalStat() {
-    return knex(tbl.lunch_events)
-        .sum('fund as fundtotal')
-        .sum('totalpaid as mealtotal');
-}
-
-// Get fundholder statistics
-function getFundholderStat() {
-    return knex(tbl.lunch_events)
-        .select(knex.raw('fundholder, sum(fund) as funds'))
-        .groupBy('fundholder')
-        .having('funds', '>', 0)
-        .orderBy('funds', 'desc');
-}
-
 module.exports = {
     // APIs for internal use
     refreshLuncherRecord: refreshLuncherRecord,
     getLunchersWithoutGmail: getLunchersWithoutGmail,
-    getTopLunchers: getTopLunchers,
-    getTotalStat: getTotalStat,
-    getFundholderStat: getFundholderStat,
 
     // REST APIs
     getLunchers: getLunchers,
     updateLuncher: updateLuncher,
     getLunchEvents: getLunchEvents,
     createEvent: createEvent,
-    getLuncherStat: getLuncherStat
+    getLuncherStat: getLuncherStat,
+    getFundholderStat: getFundholderStat,
+    getStockList: getStockList,
+    addStockList: addStockList
 };

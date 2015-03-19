@@ -4,12 +4,15 @@ var gulp = require('gulp');
 // plugins
 var fs = require('fs'),
     path = require('path'),
+    debug = require('gulp-debug'),
     merge = require('merge-stream'),
     minifyCSS = require('gulp-minify-css'),
     concat = require('gulp-concat'),
+    gulpif = require('gulp-if'),
     closureCompiler = require('gulp-closure-compiler'),
-    htmlreplace = require('gulp-html-replace'),
     less = require('gulp-less'),
+    useref = require('gulp-useref'),
+    uglify = require('gulp-uglify'),
     del = require('del');
 
 // tasks
@@ -24,8 +27,20 @@ function getFolders(dir) {
         });
 }
 
+gulp.task('process-html', ['clean'], function () {
+    var assets = useref.assets();
+
+    return gulp.src('views/*.ejs')
+        .pipe(assets)
+        .pipe(gulpif('*.js', uglify()))
+        .pipe(gulpif('*.css', minifyCSS()))
+        .pipe(assets.restore())
+        .pipe(useref())
+        .pipe(gulp.dest('dist/views'));
+});
+
 // Loops through the css directory and create one minified css for each folder
-gulp.task('minifyCss', ['clean', 'less'], function () {
+gulp.task('minifyCss', ['clean'], function () {
     var scriptsPath = 'public/css';
     var folders = getFolders(scriptsPath);
 
@@ -61,23 +76,6 @@ gulp.task('minifyJs', ['clean'], function () {
     return merge(tasks);
 });
 
-// Loop through the views directory and create production views for each file
-gulp.task('processHtml', ['clean'], function () {
-    return gulp.src('views/*.ejs')
-        .pipe(htmlreplace({
-            'css': {
-                src: null,
-                tpl: '<link rel="stylesheet" type="text/css" href="css/%f.min.css" />'
-            },
-            'js': {
-                src: null,
-                tpl: '<script type="text/javascript" src="js/%f.min.js"></script>'
-            },
-            'commonjs': 'js/common.min.js'
-        }))
-        .pipe(gulp.dest('dist/views/'));
-});
-
 gulp.task('less', function () {
     return gulp.src(['less/site.less'])
         .pipe(less({
@@ -87,5 +85,5 @@ gulp.task('less', function () {
 });
 
 // build task
-gulp.task('build', ['minifyCss', 'minifyJs', 'processHtml']);
-gulp.task('default', ['less']);
+gulp.task('build', ['process-html']);
+// gulp.task('default', ['less']);

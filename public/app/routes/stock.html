@@ -1,0 +1,20 @@
+<div class="container" style="min-height: 300px;">
+
+    <md-autocomplete
+        style="margin-bottom: 15px"
+        md-selected-item="StockCtrl.selectedItem"
+        md-search-text="StockCtrl.searchText"
+        md-items="item in StockCtrl.querySearch(StockCtrl.searchText)"
+        md-item-text="item.symbol"
+        md-autofocus="false"
+        md-delay="500"
+        placeholder="Stock Quote Lookup">
+        <span md-highlight-text="StockCtrl.searchText">{{item.symbol}} ({{item.name}}) - {{item.exchange}}</span>
+    </md-autocomplete>
+
+    <!-- Stock search result -->
+    <stock-chart symbol="StockCtrl.selectedItem.symbol"></stock-chart>
+
+    <stock-chart symbol="'LULU'"></stock-chart>
+
+</div><!-- /container -->

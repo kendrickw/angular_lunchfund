@@ -1,0 +1,40 @@
+<md-content class="panel panel-default">
+    <md-toolbar class="panel-heading md-primary md-hue-1">
+        <div layout ng-click="FundStatCtrl.togglefundholder()">
+            <div flex>Fund Holder Stats</div>
+            <md-button aria-label="{{FundStatCtrl.fundholderstatMode.text}}"
+                       style="padding: 0px;">
+                <md-icon md-svg-icon="{{FundStatCtrl.fundholderstatMode.icon}}"></md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+
+    <div class="panel-body" ng-show="FundStatCtrl.fundholderstatMode.expand">
+        <div style="display: inline-block" ng-repeat="entry in FundStatCtrl.fundholderstat">
+                <div class="lf-badge" style="display: inline-block">
+                    {{entry.username}}: {{entry.fund | currency}}
+                </div>
+                <div style="width:1px; height:20px; display:inline-block"></div>
+        </div>
+    </div>
+
+    <md-toolbar class="panel-heading md-primary md-hue-1">
+        <div layout ng-click="FundStatCtrl.togglelunchouting()">
+            <div flex>Lunch Outings</div>
+            <md-button aria-label="{{FundStatCtrl.lunchoutingstatMode.text}}"
+                       style="padding: 0px;">
+                <md-icon md-svg-icon="{{FundStatCtrl.lunchoutingstatMode.icon}}"></md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+
+    <div class="panel-body" ng-show="FundStatCtrl.lunchoutingstatMode.expand">
+        <div style="display: inline-block" ng-repeat="entry in FundStatCtrl.lunchoutingstat">
+            <div class="lf-badge" style="display: inline-block">
+                {{entry.username}}: {{entry.meal_count}}
+            </div>
+            <div style="width:1px; height:20px; display:inline-block"></div>
+        </div>
+    </div>
+
+</md-content>

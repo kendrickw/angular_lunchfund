@@ -6,7 +6,7 @@ applications:
   name: LunchFund
   command: node app.js
   env:
-    NODE_ENV: 'production'
+    NODE_ENV: 'development'
   domain: mybluemix.net
   instances: 1
   memory: 512M

@@ -1,0 +1,31 @@
+<md-content class="panel panel-default">
+    <md-toolbar class="panel-heading md-primary md-hue-1">
+        <div layout="row" ng-click="LuncherCtrl.toggleEdit()">
+            <div flex>{{LuncherCtrl.attendee().length}} lunchers</div>
+            <md-button style="padding: 0px;">
+                <md-icon md-svg-icon="{{LuncherCtrl.editMode.icon}}"></md-icon>
+                <span> {{LuncherCtrl.editMode.text}}</span>
+            </md-button>
+        </div>
+    </md-toolbar>
+
+    <div class="panel-body">
+        <div style="display: inline-block"
+             ng-repeat="user in LuncherCtrl.lunchers() track by user.id"
+             ng-show="LuncherCtrl.editMode.expand || LuncherCtrl.isAttending(user)">
+            <button style="display:inline-block"
+                    class="lf-badge"
+                    ng-class="{
+                                'selected': LuncherCtrl.editMode.expand && LuncherCtrl.isAttending(user),
+                                'notselected': LuncherCtrl.editMode.expand && !LuncherCtrl.isAttending(user)
+                              }"
+                    ng-click="LuncherCtrl.toggle(user)"
+                    ng-disabled="!LuncherCtrl.editMode.expand">
+                {{user.username}}
+            </button>
+
+            <!-- put some spacings between buttons -->
+            <div style="width:1px; height: 20px; display:inline-block"></div>
+        </div>
+    </div>
+</md-content>

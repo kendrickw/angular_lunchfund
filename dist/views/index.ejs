@@ -1,42 +1,137 @@
 <!DOCTYPE html>
 <html ng-app="index">
     <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         <title>Lunchfund</title>
 
-        <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
-        <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 
-        <link rel="stylesheet" type="text/css" href="bootstrap/dist/css/bootstrap.min.css" />
-        <link rel="stylesheet" type="text/css" href="angular-loading-bar/build/loading-bar.css" />
+        <!-- courtesy of http://realfavicongenerator.net/ -->
+        <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+        <link rel="apple-touch-icon" sizes="57x57" href="images/apple-touch-icon-57x57.png" />
+        <link rel="apple-touch-icon" sizes="60x60" href="images/apple-touch-icon-60x60.png" />
+        <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png" />
+        <link rel="apple-touch-icon" sizes="76x76" href="images/apple-touch-icon-76x76.png" />
+        <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png" />
+        <link rel="apple-touch-icon" sizes="120x120" href="images/apple-touch-icon-120x120.png" />
+        <link rel="apple-touch-icon" sizes="144x144" href="images/apple-touch-icon-144x144.png" />
+        <link rel="icon" type="image/png" href="images/favicon-32x32.png" sizes="32x32" />
+        <link rel="icon" type="image/png" href="images/favicon-96x96.png" sizes="96x96" />
+        <link rel="icon" type="image/png" href="images/favicon-16x16.png" sizes="16x16" />
 
-        <link rel="stylesheet" type="text/css" href="css/index.min.css" />
+        <link rel="stylesheet" href="../css/index-angular.min.css">
+
+        <link rel="stylesheet" href="../css/index.min.css">
     </head>
 
-    <body>
+    <body ng-controller="MenuController as MenuCtrl" layout="row">
 
         <!-- Pass Node.js variables into HTML page -->
-        <script type="text/javascript">
-            var currentuser=<%- JSON.stringify(user) %>;
+        <script>
             var COPYRIGHT_TEXT="<%- COPYRIGHT_TEXT %>";
+            var VERSION="<%- VERSION %>";
+            var currentuser=<%- JSON.stringify(user) %>;
             var development=<%- DEVMODE %>;
         </script>
 
-        <div title-menu></div>
+        <!-- Left sidemenu -->
+        <md-sidenav class="md-sidenav-left md-whiteframe-z2"
+                    style="width: 180px; min-width: initial;"
+                    ng-click="MenuCtrl.closeSidemenu('left-sidemenu')"
+                    md-is-locked-open="$mdMedia('gt-sm')"
+                    md-component-id="left-sidemenu">
+            <md-toolbar class="md-toolbar-tools md-primary md-hue-1">
+                <h3>Lunchfund</h3>
+            </md-toolbar>
 
-        <!-- Main Content -->
-        <div ui-view></div>
+            <md-content layout="column" flex class="md-padding" role="navigation">
+                <md-list>
+                    <md-item ng-repeat="page in MenuCtrl.allPages">
+                        <md-item-content>
+                            <md-button ng-href="{{page.link}}">
+                                <md-icon md-svg-icon="{{page.icon}}"></md-icon> {{page.name}}
+                            </md-button>
+                        </md-item-content>
+                    </md-item>
+                </md-list>
+            </md-content>
+        </md-sidenav><!-- /left-sidemenu -->
 
-        <script type="text/javascript" src="angular/angular.min.js"></script>
-        <script type="text/javascript" src="angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
-        <script type="text/javascript" src="angular-loading-bar/build/loading-bar.min.js"></script>
-        <script type="text/javascript" src="angular-ui-router/release/angular-ui-router.min.js"></script>
+        <!-- Right sidemenu -->
+        <md-sidenav class="md-sidenav-right md-whiteframe-z2"
+                    style="width: 180px; min-width: initial;"
+                    ng-click="MenuCtrl.closeSidemenu('right-sidemenu')"
+                    md-component-id="right-sidemenu">
 
-        <script type="text/javascript" src="angular-google-chart/ng-google-chart.js"></script>
+            <md-toolbar class="md-toolbar-tools md-primary md-hue-1">
+                <div>{{MenuCtrl.loginUser().username}}</div>
+                <span flex></span>
+                <md-icon md-svg-icon="navigation:chevron-right"></md-icon>
+            </md-toolbar>
 
-        <script src="js/common.min.js"></script>
+            <md-content layout="column" flex class="md-padding" role="navigation">
+                <md-list>
+                    <md-item ng-repeat="userdetail in MenuCtrl.userdetail">
+                        <md-item-content>
+                            <div class="md-tile-content">
+                                <h3>{{userdetail.title}}</h3>
+                                <h4>{{userdetail.text}}</h4>
+                            </div>
+                        </md-item-content>
+                    </md-item>
+                    <md-item>
+                        <md-item-content>
+                            <md-button ng-href="/logout">
+                                <md-icon md-svg-icon="action:exit-to-app"></md-icon> Logout
+                            </md-button>
+                        </md-item-content>
+                    </md-item>
+                </md-list>
+            </md-content>
+        </md-sidenav><!-- /right-sidemenu -->
 
-        <script type="text/javascript" src="js/index.min.js"></script>
+        <div layout="column" tabindex="-1" role="main" flex>
+            <!-- titlebar -->
+            <md-toolbar layout="row" class="md-toolbar-tools" role="main">
+
+                <button ng-click="MenuCtrl.toggleSidemenu('left-sidemenu')" class="menuBtn" hide-gt-sm>
+                    <md-icon md-svg-icon="navigation:menu" style="color:#FFF;"></md-icon>
+                </button>
+
+                <div layout="row" flex class="fill-height">
+                    <div style="padding-left: 10px;">
+                        <h3>{{MenuCtrl.getCurrentPage().name}}<span ng-show="MenuCtrl.development"> (dev)</span></h3>
+                    </div>
+                    <span flex></span> <!-- use up the empty space -->
+                    <a href ng-click="MenuCtrl.toggleSidemenu('right-sidemenu')">
+                        <img class="face"
+                             ng-src="{{MenuCtrl.loginUser().picture}}" class="face"
+                             ng-show="MenuCtrl.loginUser().picture"></img>
+                        <div class="face"
+                             ng-hide="MenuCtrl.loginUser().picture" class="face">
+                            {{MenuCtrl.loginUser().initial}}
+                        </div>
+                    </a>
+                </div>
+            </md-toolbar><!-- /titlebar -->
+
+            <md-content id="main-content">
+                <div ui-view></div>
+
+                <copyright layout="row" layout-align="center center"></copyright>
+            </md-content>
+
+        </div>
+
+        <!-- Angular Material Dependencies -->
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angular_material/0.8.3/angular-material.min.js"></script>
+
+        <script src="../js/index-angular.min.js"></script>
+
+        <script src="../js/index.min.js"></script>
 
     </body>
 </html>

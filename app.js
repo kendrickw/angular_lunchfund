@@ -88,8 +88,6 @@ app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
 
 app.use(express['static'](path.join(__dirname, 'bower_components')));
-app.use('/css/fonts', express['static'](path.join(__dirname, '/bower_components/bootstrap/dist/fonts')));
-app.use('/fonts', express['static'](path.join(__dirname, '/bower_components/bootstrap/dist/fonts')));
 app.use(express['static'](path.join(__dirname, 'public')));
 app.use(favicon(__dirname + '/public/images/favicon.ico'));
 app.use(logger('dev'));
@@ -192,18 +190,21 @@ app.get('/auth/google/callback', passport.authenticate('google', {
 
 
 // MYSQL endpoints
-app.get('/db/lunchers', ensureAuthenticated, db.getLunchers);
+app.get('/db/luncher', ensureAuthenticated, db.getLunchers);
 app.put('/db/luncher/:id', ensureGoogleAuthenticated, db.updateLuncher);
-app.get('/db/events', ensureAuthenticated, db.getLunchEvents);
+app.get('/db/event', ensureAuthenticated, db.getLunchEvents);
 app.post('/db/event', ensureAuthenticated, db.createEvent);
 app.get('/db/luncherstat', ensureAuthenticated, db.getLuncherStat);
+app.get('/db/fundholderstat', ensureAuthenticated, db.getFundholderStat);
+app.get('/db/stock', ensureAuthenticated, db.getStockList);
+app.post('/db/stock', ensureAuthenticated, db.addStockList);
 
 
 // Main application endpoints
 app.get('/', ensureAuthenticated, function (req, res) {
     res.render('index', {
-        'version' : app_version,
         COPYRIGHT_TEXT: copyright_text,
+        VERSION: app_version,
         DEVMODE: development,
         user: req.user
     });
@@ -211,21 +212,10 @@ app.get('/', ensureAuthenticated, function (req, res) {
 
 app.get('/login', function (req, res) {
     res.render('login', {
-        COPYRIGHT_TEXT: copyright_text
+        COPYRIGHT_TEXT: copyright_text,
+        VERSION: app_version
     });
 });
-
-/*
-db.getTopLunchers().then(function (rows) {
-    console.log(rows);
-});
-db.getTotalStat().then(function (total) {
-    console.log(total);
-});
-db.getFundholderStat().then(function (fundstat) {
-    console.log(fundstat);
-});
-*/
 
 app.get('/logout', function (req, res) {
     req.logout();
@@ -241,7 +231,8 @@ app.get('/registration', function (req, res) {
         res.render('registration', {
             email: req.user.email,
             lunchers: rows,
-            COPYRIGHT_TEXT: copyright_text
+            COPYRIGHT_TEXT: copyright_text,
+            VERSION: app_version
         });
     })['catch'](function (error) {
         res.status(400);

@@ -1,0 +1,92 @@
+<md-content class="panel panel-default">
+    <div class="panel-body">
+
+        <form name="Fundform" ng-submit="FundCtrl.submit($event)">
+
+            <!--
+                For form error detection
+                <pre>{{Fundform.eventdate.$error | json}}</pre>
+            -->
+            <md-input-container md-no-float>
+                <label>Event Date</label>
+                <input type="date" ng-model="FundCtrl.eventdate"
+                       name="eventdate"
+                       max="{{FundCtrl.today}}"
+                       required>
+                <div ng-messages="Fundform.eventdate.$error">
+                    <div ng-message="required">Please enter a valid date.</div>
+                    <div ng-message="max">Are you time travelling?</div>
+                </div>
+            </md-input-container>
+
+            <md-input-container>
+                <label>Bill</label>
+                <input type="number" min="0" step="0.01" pattern="[\d\.]*"
+                       name="bill"
+                       placeholder="Enter Amount"
+                       ng-change="FundCtrl.tipOffset = 0"
+                       ng-model="FundCtrl.billAmount"
+                       required/>
+                <div ng-messages="Fundform.bill.$error">
+                    <div ng-message="required">Please enter the bill amount</div>
+                    <div ng-message="number">The bill amount must be a number.</div>
+                    <div ng-message="min">There is no such thing as free lunch.</div>
+                </div>
+            </md-input-container>
+
+            <div layout layout-align="center center">
+                <div>Tips ({{FundCtrl.tipPercent | number:2}}%)</div>
+                <span flex></span>
+                <md-button class="md-accent md-raised"
+                           ng-click="FundCtrl.tipOffset = 0"
+                           ng-disabled="!FundCtrl.tipOffset">
+                    <md-icon md-svg-icon="content:undo"></md-icon><span> Reset</span>
+                </md-button>
+            </div>
+
+            <div layout>
+                <md-slider flex ng-model="FundCtrl.tipOffset"
+                           class="md-primary"
+                           aria-label="tipOffset"
+                           id="tip"
+                           step="0.25"
+                           min="{{FundCtrl.tipOffsetFloor()}}"
+                           max="{{FundCtrl.tipOffsetCeil()}}">
+                </md-slider>
+                <div flex="33" layout layout-align="start center">
+                    <div>{{FundCtrl.tipsAmount | currency}}</div>
+                </div>
+            </div>
+
+            <div layout>
+                <div flex>Total</div>
+                <div flex="33">{{FundCtrl.totalAmount | currency}}</div>
+            </div>
+
+            <div layout>
+                <div flex>Each Pays</div>
+                <div flex="33">{{FundCtrl.eachPays | currency}}</div>
+            </div>
+
+            <div layout>
+                <div flex>Lunchfund</div>
+                <div flex="33">{{FundCtrl.getLunchfundAmount() | currency}}</div>
+            </div>
+
+            <div layout>
+                <div flex layout layout="start center">
+                <md-select ng-model="FundCtrl.fundholder" placeholder="Fundholder">
+                    <md-option ng-repeat="user in FundCtrl.attendee()" ng-value="user">{{user.username}}</md-option>
+                </md-select>
+                </div>
+                <div layout layout-align="start center">
+                    <md-button class="md-accent md-raised">
+                        <md-icon md-svg-icon="file:cloud-upload"></md-icon><span> Submit</span>
+                    </md-button>
+                </div>
+            </div>
+
+        </form>
+
+    </div><!-- /panel-body -->
+</md-content>

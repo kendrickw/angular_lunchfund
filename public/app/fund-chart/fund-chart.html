@@ -1,0 +1,12 @@
+<md-content class="panel panel-default">
+    <md-toolbar class="panel-heading md-primary md-hue-1">
+        <div layout="row">
+            <div flex>Fund Book Value</div>
+            <div>{{FundChartCtrl.book.total | currency}}</div>
+        </div>
+    </md-toolbar>
+
+    <div class="panel-body">
+        <div google-chart chart="FundChartCtrl.book" style="{{FundChartCtrl.book.cssStyle}}"></div>
+    </div>
+</md-content>

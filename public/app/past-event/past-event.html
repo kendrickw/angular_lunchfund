@@ -1,0 +1,22 @@
+<md-content class="panel panel-default">
+    <md-toolbar class="panel-heading md-primary md-hue-1">
+        <div layout="row">
+            <div>Past Events</div>
+        </div>
+    </md-toolbar>
+
+    <div class="panel-body">
+        <md-list>
+            <md-item ng-repeat="event in EventCtrl.events() track by event.id">
+                <md-item-content>
+                    <div class="md-tile-content">
+                        <h3>{{event.time | date : 'MMM-dd'}}</h3>
+                        <h4>Bill: {{event.bill | currency}}</h4>
+                        <h4>Lunchfund: {{event.fund | currency}}</h4>
+                    </div>
+                </md-item-content>
+                <md-divider ng-if="!$last"></md-divider>
+            </md-item>
+        </md-list>
+    </div>
+</md-content>
