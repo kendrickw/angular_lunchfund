@@ -1,27 +1,60 @@
-# LunchFund written in Angular
+Lab Lunch Group Mutual Fund Mobile Application (powered by Angular.JS)
+======================================================================
 
-The application uses Node.js®
+This a webapp for calculating lunch fund contribution, and also records attendance and lunch fund amount in a spreadsheet hosted on google drive.
 
-## See it in action!
+Getting Started
+---------------
 
+The [zipball of latest release](https://github.com/kendrickw/angular_lunchfund/archive/master.zip) contains everything you need to deploy the lunchfund app.
 
-## How to deploy
-npm install
-bower install
-gulp build
-node app.js
+This webapp uses the following technologies:
+* Node.js (webserver)
+* gulp (for building the production app)
+* bower (for managing UI dependencies)
+* Angular.js framework
+* Angular Material UI components
+* mySQL database for hosting the lunchfund data
+* google spreadsheet as an alternate backup for lunchfund data
+* GOOGLE sign-on authentication
+* option deployment to Bluemix
 
-## How it works
-MYSQL database needs to be InnoDB to support SQL transactions.
+The SQL database must be populated first before running the lunchfund app.
+* (Ask Kendrick for the current .sql file)
+* routes/config.js contains user configuration parameters
 
+Features
+--------
 
-## Developer Notes
-# Avoid using ng-controller, so directive is used wherever possible
-# ngmin is not used in gulp, so make sure to use the following syntax:
-app.controller('MenuController', [ '$aside', 'global', function ($aside, global) {
-    ...
-}]);
+* GOOGLE login authentication
+* MYSQL database to store data entries
+* Alternate backup to GOOGLE spreadsheet
+* Calculate lunch fund automatically using number of attendees and bill amount
+* Stock portfolio management
 
-## License
+Why not native app?
+-------------------
 
-The license information can be found in the file [license.txt](./license.txt), which is located in the root directory of the project.
+Everything we want to accomplish so far can be done via a web app.  Some of the more advance features (i.e. face recognition) may require us to implement native code.  But until that is implemented, this will remain a web app.
+
+Possible Future Work
+--------------------
+
+* Build native app (maybe needed for performance anyways)
+
+Issues
+------
+
+Found a bug? Please create an issue here on GitHub!
+
+https://github.com/kendrickw/angular_lunchfund/issues
+
+Testing
+-------
+
+None at the moment.
+
+License
+-------
+
+Copyright 2013, 2015 Lunch Fund Group
