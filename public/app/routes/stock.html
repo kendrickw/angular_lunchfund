@@ -15,6 +15,6 @@
     <!-- Stock search result -->
     <stock-chart symbol="StockCtrl.selectedItem.symbol"></stock-chart>
 
-    <stock-chart symbol="'LULU'"></stock-chart>
+    <stock-chart ng-repeat="entry in StockCtrl.getWatchList()" symbol="entry.symbol"></stock-chart>
 
 </div><!-- /container -->

@@ -1,7 +1,19 @@
 <md-content class="panel panel-default" ng-show="stocksymbol">
     <md-toolbar class="panel-heading md-primary md-hue-1">
         <div layout>
-            <div>{{stock.name}} ({{stocksymbol}})</div>
+            <div flex>{{stock.name}} ({{stocksymbol}})</div>
+            <div ng-show="StockChartCtrl.isValidSym">
+                <md-button aria-label="buy or sell"
+                           style="padding: 0px;"
+                           ng-click="StockChartCtrl.toggleBuySell()">
+                    <md-icon md-svg-icon="action:shopping-cart"></md-icon>
+                </md-button>
+                <md-button aria-label="maintain watchlist"
+                           style="padding: 0px;"
+                           ng-click="StockChartCtrl.toggleWatchList()">
+                    <md-icon md-svg-icon="{{StockChartCtrl.getToggleIcon()}}"></md-icon>
+                </md-button>
+            </div>
         </div>
     </md-toolbar>
 
@@ -9,7 +21,53 @@
         <p>Unable to retrieve data</p>
     </div>
 
+    <!-- Buy/Sell Form -->
+    <div class="panel-body" ng-show="StockChartCtrl.exposeForm">
+        <!-- display buy/sell history -->
+
+        <!-- form -->
+        <md-content md-theme="dark" class="md-padding">
+            <form name="Stockform">
+                <div layout="row" layout="start center">
+                    <md-select ng-model="StockChartCtrl.stockform.type">
+                        <md-option ng-value="'BUY'" ng-selected="true">BUY</md-option>
+                        <md-option ng-value="'SELL'">SELL</md-option>
+                    </md-select>
+                    <md-input-container>
+                        <label>Date</label>
+                        <input type="date" ng-model="StockChartCtrl.stockform.date"
+                               name="date"
+                               max="{{StockChartCtrl.stockform.today}}"
+                               required/>
+                        <div ng-messages="Stockform.date.$error">
+                            <div ng-message="required">Please enter a valid date.</div>
+                            <div ng-message="max">Are you time travelling?</div>
+                        </div>
+                    </md-input-container>
+                </div>
+                <div layout="row" layout="start center">
+                    <md-input-container>
+                        <label>Position</label>
+                        <input type="number" min="0" step="0.01" pattern="[\d\.]*"
+                               ng-model="StockChartCtrl.stockform.position"
+                               name="position"
+                               required/>
+                    </md-input-container>
+                    <md-input-container>
+                        <label>Cost</label>
+                        <input type="number" min="0" step="0.01" pattern="[\d\.]*"
+                               ng-model="StockChartCtrl.stockform.cost"
+                               name="cost"
+                               required/>
+                    </md-input-container>
+                </div>
+            </form>
+        </md-content>
+    </div>
+
     <div class="panel-body" ng-show="StockChartCtrl.isValidSym">
+
+        <!-- START of stock quotes -->
         <div layout>
             <div>{{stock.created | date:'medium'}}</div>
         </div>
@@ -59,6 +117,10 @@
                     label="{{chart.timespan}}">
             </md-tab>
         </md-tabs>
+
+        <!-- Using switch statement, and not placed inline within tab, because
+             I want the image to be loaded only if the tab is visible
+        -->
         <ng-switch on="StockChartCtrl.tabindex" class="tabpanel-container">
             <div role="tabpanel"
                  aria-labelledby="1D"

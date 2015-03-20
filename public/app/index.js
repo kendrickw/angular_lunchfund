@@ -36,6 +36,10 @@
             .primaryPalette('indigo')
             .accentPalette('orange');
 
+        $mdThemingProvider.theme('dark')
+            .primaryPalette('yellow')
+            .dark();
+
         // Register icon IDs with sources. Future $mdIcon( <id> ) lookups
         // will load by url and retrieve the data via the $http and $templateCache
         $mdIconProvider
@@ -45,8 +49,11 @@
             .icon('action:done', 'images/material-svg/action/ic_done_24px.svg', 24)
             .icon('action:exit-to-app', 'images/material-svg/action/ic_exit_to_app_24px.svg', 24)
             .icon('action:account-balance-wallet', 'images/material-svg/action/ic_account_balance_wallet_24px.svg', 24)
+            .icon('action:shopping-cart', 'images/material-svg/action/ic_shopping_cart_24px.svg', 24)
             .icon('action:trending-up', 'images/material-svg/action/ic_trending_up_24px.svg', 24)
             .icon('action:trending-down', 'images/material-svg/action/ic_trending_down_24px.svg', 24)
+            .icon('content:add-circle', 'images/material-svg/content/ic_add_circle_24px.svg', 24)
+            .icon('content:remove-circle', 'images/material-svg/content/ic_remove_circle_24px.svg', 24)
             .icon('content:undo', 'images/material-svg/content/ic_undo_24px.svg', 24)
             .icon('image:edit', 'images/material-svg/image/ic_edit_24px.svg', 24)
             .icon('navigation:chevron-right', 'images/material-svg/navigation/ic_chevron_right_24px.svg', 24)
@@ -64,8 +71,11 @@
             'images/material-svg/action/ic_exit_to_app_24px.svg',
             'images/material-svg/action/ic_done_24px.svg',
             'images/material-svg/action/ic_account_balance_wallet_24px.svg',
+            'images/material-svg/action/ic_shopping_cart_24px.svg',
             'images/material-svg/action/ic_trending_up_24px.svg',
             'images/material-svg/action/ic_trending_down_24px.svg',
+            'images/material-svg/content/ic_add_circle_24px.svg',
+            'images/material-svg/content/ic_remove_circle_24px.svg',
             'images/material-svg/content/ic_undo_24px.svg',
             'images/material-svg/image/ic_edit_24px.svg',
             'images/material-svg/navigation/ic_chevron_right_24px.svg',
@@ -122,9 +132,9 @@
             querydeferred;
 
         angular.extend(me, {
-            symbols: [],
             selectedItem: null,
             searchText: null,
+            getWatchList: function () { return global.get('stocklist'); }
         });
 
         // Fake out YAHOO callback

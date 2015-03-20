@@ -16,7 +16,7 @@
         };
     });
 
-    app.controller('FundController', [ '$http', '$mdDialog', 'global', 'message', function ($http, $mdDialog, global, message) {
+    app.controller('FundController', [ '$http', 'global', 'message', function ($http, global, message) {
         var me = this;
 
         angular.extend(me, {
@@ -74,38 +74,17 @@
             me.tipOffset += up ? 0.25 : -0.25;
         }
 
-        function showError(msg, ev) {
-            $mdDialog.show(
-                $mdDialog.alert()
-                    .title('Error')
-                    .content(msg)
-                    .ariaLabel('Error message')
-                    .ok('OK')
-                    .targetEvent(ev)
-            );
-        }
-
-        function showInfo(msg, ev) {
-            $mdDialog.show(
-                $mdDialog.alert()
-                    .content(msg)
-                    .ariaLabel('Informational message')
-                    .ok('OK')
-                    .targetEvent(ev)
-            );
-        }
-
         function verifysubmit(ev) {
             if (!me.billAmount) {
-                showError(message.getMsg('INVALID_BILLAMOUNT', [me.billAmount]), ev);
+                message.showError('INVALID_BILLAMOUNT', [me.billAmount]);
                 return false;
             }
             if (!me.fundholder) {
-                showError(message.getMsg('INVALID_FUNDHOLDER'), ev);
+                message.showError('INVALID_FUNDHOLDER');
                 return false;
             }
             if (!me.attendee().length) {
-                showError(message.getMsg('NO_ATTENDEE'), ev);
+                message.showError('NO_ATTENDEE');
                 return false;
             }
             return true;
@@ -127,9 +106,9 @@
             }
             $http.post('db/event', entry).success(function (data) {
                 global.get('events').unshift(entry);
-                showInfo(message.getMsg('SUBMIT_SUCCESS'), ev);
+                message.showInfo('SUBMIT_SUCCESS');
             }).error(function (error, status, headers, config) {
-                showError(message.getMsg('GENERIC', [JSON.stringify(error)]), ev);
+                message.showError('GENERIC', [JSON.stringify(error)]);
             });
         }
 

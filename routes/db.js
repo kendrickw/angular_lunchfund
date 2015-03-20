@@ -61,9 +61,15 @@ function getLunchers(req, res) {
 // Update fields in Luncher record
 function updateLuncher(req, res) {
     var id = req.params.id;
-    if (!id || !req.body) {
+    if (!id) {
         res.status(400);
-        res.send("incorrectly formed body");
+        res.send("updateLuncher: invalid id " + id);
+        return;
+    }
+    if (!req.body) {
+        res.status(400);
+        res.send("updateLuncher: Malformed body: " + JSON.stringify(req.body));
+        return;
     }
 
     knex(tbl.lunchers).where({
@@ -213,7 +219,8 @@ function createEvent(req, res) {
             !req.body.hasOwnProperty('fundholder') ||
             !req.body.hasOwnProperty('submitter')) {
         res.status(400);
-        return res.send("createEvent: Malformed body: " + JSON.stringify(req.body));
+        res.send("createEvent: Malformed body: " + JSON.stringify(req.body));
+        return;
     }
 
     knex.transaction(function (trx) {
@@ -261,8 +268,7 @@ function createEvent(req, res) {
         // response contains reply from google spreadsheet
         res.send();
     })['catch'](function (error) {
-        // If we get here, that means that neither the 'Old Books' catalogues insert,
-        // nor any of the books inserts will have taken place.
+        // Error occurred within transaction
         res.status(400);
         res.send(error);
     });
@@ -271,7 +277,7 @@ function createEvent(req, res) {
 
 // Get stock watch list
 function getStockList(req, res) {
-    var query = knex(tbl.stocks).orderBy('id');
+    var query = knex(tbl.stocks).orderBy('id', 'desc');
 
     query.then(function (rows) {
         res.json(rows);
@@ -287,25 +293,65 @@ function addStockList(req, res) {
             !req.body.hasOwnProperty('symbol') ||
             !req.body.hasOwnProperty('exchange')) {
         res.status(400);
-        return res.send("createEvent: Malformed body: " + JSON.stringify(req.body));
+        res.send("createEvent: Malformed body: " + JSON.stringify(req.body));
+        return;
     }
 
-    /*
     knex.transaction(function (trx) {
+        var entry = {
+            symbol: req.body.symbol,
+            exchange: req.body.exchange
+        };
 
-    }).then(function (response) {
-        // response contains reply from google spreadsheet
+        return trx
+            .select('symbol', 'exchange')
+            .from(tbl.stocks)
+            .where(entry)
+            .then(function (rows) {
+                if (rows.length) {
+                    return Promise.reject("addStockList: ' + entry.symbol + ' is already in watchlist.");
+                }
+
+                return trx.insert(entry).into(tbl.stocks);
+            });
+    }).then(function (inserts) {
+        // Number of records written
+        // console.log(inserts.length);
         res.send();
     })['catch'](function (error) {
-        // If we get here, that means that neither the 'Old Books' catalogues insert,
-        // nor any of the books inserts will have taken place.
+        // Error occurred within transaction
         res.status(400);
         res.send(error);
     });
-    */
     res.send();
 }
 
+// Delete a stock from stocklist
+function delStockList(req, res) {
+    var symbol = req.params.symbol;
+    if (!symbol) {
+        res.status(400);
+        res.send("delStockList: invalid symbol: " + symbol);
+        return;
+    }
+    if (!req.body) {
+        res.status(400);
+        res.send("delStockList: Malformed body: " + JSON.stringify(req.body));
+        return;
+    }
+
+    knex(tbl.stocks).where({
+        symbol: symbol
+    }).del().then(function (rownum) {
+        // console.log(rownum);
+        if (rownum !== 1) {
+            res.status(400);
+            res.send({rownum: rownum});
+        } else {
+            res.send(null);
+        }
+    });
+}
 
 // Check lunchfund database for record with given email
 // If exists, update lunchfund record with current profile information.
@@ -339,5 +385,6 @@ module.exports = {
     getLuncherStat: getLuncherStat,
     getFundholderStat: getFundholderStat,
     getStockList: getStockList,
-    addStockList: addStockList
+    addStockList: addStockList,
+    delStockList: delStockList
 };

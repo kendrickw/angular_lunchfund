@@ -3,7 +3,7 @@
 "use strict";
 
 (function () {
-    var app = angular.module('stockChart', ['globalFactory', 'fundFactory']);
+    var app = angular.module('stockChart', ['globalFactory', 'fundFactory', 'messageFactory']);
 
     app.directive('stockChart', function () {
         return {
@@ -20,7 +20,7 @@
                     scope.getStockQuote();
                 }
                 scope.$watch('stocksymbol', function (newValue, oldValue) {
-                    if (newValue) {
+                    if (newValue !== oldValue) {
                         scope.getStockQuote();
                     }
                 });
@@ -36,13 +36,18 @@
     // l: logrithmic scale: on, off
     // z: size: s(small), m(medium), l(large)
     // p: mday(Moving Average Indicator): specify number of days (i.e. 50)
-    app.controller('StockChartController', [ 'stockstat', '$scope', '$filter', function (stockstat, $scope, $filter) {
+    app.controller('StockChartController', [ 'global', 'stockstat', '$scope', '$filter', '$http', 'message', function (global, stockstat, $scope, $filter, $http, message) {
         var me = this,
             baseurl = 'http://chart.finance.yahoo.com/z?q=l&l=off&p=m50,m200';
 
         angular.extend(me, {
             isValidSym: false,
             tabindex: 3,
+            exposeForm: false,      // Show buy/sell form
+            stockform: {
+                date: new Date(),
+                today: new Date()
+            },
             charts: [ {
                 timespan: '1d',
                 url: '&t=1d'
@@ -88,6 +93,20 @@
             me.tabindex = Math.max(me.tabindex - 1, 0);
         }
 
+        // Check if symbol is in watchlist
+        // returns -1 if not in watchList, else return index where it is found
+        function inWatchList() {
+            var watchlist = global.get('stocklist'),
+                k;
+
+            for (k = 0; k < watchlist.length; k += 1) {
+                if (watchlist[k].symbol === $scope.stocksymbol) {
+                    return k;
+                }
+            }
+            return -1;
+        }
+
         $scope.stock = {};
         $scope.getStockQuote = function () {
             stockstat.getData([ $scope.stocksymbol ]).then(function (data) {
@@ -108,6 +127,7 @@
                 $scope.stock = {
                     name: entry.Name,
                     symbol: entry.symbol,
+                    exchange: entry.StockExchange,
                     created: created,
                     askdisp: $filter('currency')(entry.Ask, entry.Currency + ' ', 2),
                     ask: entry.Ask,
@@ -135,11 +155,54 @@
             });
         };
 
+        // Function to add current displayed stock into watchlist
+        function addToStocklist() {
+            $http.post('db/stock', $scope.stock).success(function (data) {
+                message.showInfo('WATCHLIST_ADD_SUCCESS', [ $scope.stock.symbol ]);
+                global.get('stocklist').unshift($scope.stock);
+            }).error(function (error, status, headers, config) {
+                message.showError('GENERIC', [JSON.stringify(error)]);
+            });
+        }
+
+        function removeFromStocklist(idx) {
+            $http.delete('db/stock/' + $scope.stock.symbol).success(function (data) {
+                message.showInfo('WATCHLIST_REMOVE_SUCCESS', [ $scope.stock.symbol ]);
+                global.get('stocklist').splice(idx, 1);
+            }).error(function (error, status, headers, config) {
+                message.showError('GENERIC', [JSON.stringify(error)]);
+            });
+        }
+
+        function toggleWatchList() {
+            var idx = inWatchList();
+            if (idx === -1) {
+                addToStocklist();
+            } else {
+                removeFromStocklist(idx);
+            }
+        }
+
+        // Determine the toggle icon on the stock header
+        function getToggleIcon() {
+            if (inWatchList() === -1) {
+                return 'content:add-circle';
+            }
+            return 'content:remove-circle';
+        }
+
+        function toggleBuySell() {
+            me.exposeForm = !me.exposeForm;
+        }
+
         angular.extend(me, {
             nexttab: nexttab,
             prevtab: prevtab,
             getStockChartSrc: getStockChartSrc,
-            getStockChartSrcset: getStockChartSrcset
+            getStockChartSrcset: getStockChartSrcset,
+            toggleWatchList: toggleWatchList,
+            getToggleIcon: getToggleIcon,
+            toggleBuySell: toggleBuySell
         });
 
     }]);

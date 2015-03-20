@@ -7,7 +7,7 @@
 
     // Get information about lunchers from DB
     app.factory('luncherstat', [ '$http', '$q', function ($http, $q) {
-        // SQL request returns a array with entries like:
+        // SQL request returns an array with entries like:
         // {"luncher_id":1,"total_meal_cost":1038.297422,"total_fund_contrib":113.815374,"meal_count": 232}
         var lsdef = $q.defer();
 
@@ -24,6 +24,27 @@
             lsdef.promise.then(function (data) {
                 angular.copy(data, copy);
                 def.resolve(copy);
+            });
+
+            return def.promise;
+        }
+
+        return {
+            getData: getData
+        };
+    }]);
+
+    // Get stock watchlist
+    app.factory('getstocklist', [ '$http', '$q', function ($http, $q) {
+
+        function getData() {
+            var def = $q.defer();
+
+            $http.get('/db/stock').success(function (data) {
+                def.resolve(data);
+            }).error(function (error) {
+                console.error(error);
+                def.reject("Unable to retrieve stock data from YAHOO.");
             });
 
             return def.promise;

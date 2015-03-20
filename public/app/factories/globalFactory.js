@@ -87,6 +87,20 @@
             }
         });
 
+        // Propagate stock watchlist
+        $http.get('/db/stock').success(function (data) {
+            var k, entry;
+
+            for (k = 0; k < data.length; k += 1) {
+                entry = {
+                    symbol: data[k].symbol,
+                    exchange: data[k].exchange
+                };
+
+                property.stocklist.push(entry);
+            }
+        });
+
         // Get Past couple lunch events
         $http.get('/db/event', {
             params: {

@@ -7,12 +7,12 @@
                 For form error detection
                 <pre>{{Fundform.eventdate.$error | json}}</pre>
             -->
-            <md-input-container md-no-float>
+            <md-input-container>
                 <label>Event Date</label>
                 <input type="date" ng-model="FundCtrl.eventdate"
                        name="eventdate"
                        max="{{FundCtrl.today}}"
-                       required>
+                       required/>
                 <div ng-messages="Fundform.eventdate.$error">
                     <div ng-message="required">Please enter a valid date.</div>
                     <div ng-message="max">Are you time travelling?</div>

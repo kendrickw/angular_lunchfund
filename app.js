@@ -198,6 +198,7 @@ app.get('/db/luncherstat', ensureAuthenticated, db.getLuncherStat);
 app.get('/db/fundholderstat', ensureAuthenticated, db.getFundholderStat);
 app.get('/db/stock', ensureAuthenticated, db.getStockList);
 app.post('/db/stock', ensureAuthenticated, db.addStockList);
+app.delete('/db/stock/:symbol', ensureAuthenticated, db.delStockList);
 
 
 // Main application endpoints
