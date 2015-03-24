@@ -2,35 +2,28 @@
 var gulp = require('gulp');
 
 // plugins
-var fs = require('fs'),
-    path = require('path'),
-    debug = require('gulp-debug'),
-    merge = require('merge-stream'),
+var debug = require('gulp-debug'),
     minifyCSS = require('gulp-minify-css'),
-    concat = require('gulp-concat'),
     gulpif = require('gulp-if'),
-    closureCompiler = require('gulp-closure-compiler'),
     less = require('gulp-less'),
     useref = require('gulp-useref'),
     uglify = require('gulp-uglify'),
+    manifest = require('gulp-manifest'),
+    imagemin = require('gulp-imagemin'),
+    pngquant = require('imagemin-pngquant'),
+    templateCache = require('gulp-angular-templatecache'),
     del = require('del');
 
-// tasks
+// Clean
 gulp.task('clean', function (cb) {
     del(['dist/**'], cb);
 });
 
-function getFolders(dir) {
-    return fs.readdirSync(dir)
-        .filter(function (file) {
-            return fs.statSync(path.join(dir, file)).isDirectory();
-        });
-}
-
-gulp.task('process-html', ['clean'], function () {
+// Create minified version of javascripts and css
+gulp.task('gen-prod-files', ['clean'], function () {
     var assets = useref.assets();
 
-    return gulp.src('views/*.ejs')
+    return gulp.src('dev/views/*.ejs')
         .pipe(assets)
         .pipe(gulpif('*.js', uglify()))
         .pipe(gulpif('*.css', minifyCSS()))
@@ -39,51 +32,48 @@ gulp.task('process-html', ['clean'], function () {
         .pipe(gulp.dest('dist/views'));
 });
 
-// Loops through the css directory and create one minified css for each folder
-gulp.task('minifyCss', ['clean'], function () {
-    var scriptsPath = 'public/css';
-    var folders = getFolders(scriptsPath);
-
-    var tasks = folders.map(function (folder) {
-        var opts = {comments: true, spare: true};
-        return gulp.src(path.join(scriptsPath, folder, '/*.css'))
-            .pipe(minifyCSS(opts))
-            .pipe(concat(folder  + '.min.css'))
-            .pipe(gulp.dest('dist/css/'));
-    });
-
-    return merge(tasks);
+// Optimize images
+gulp.task('image', ['clean'], function () {
+    return gulp.src('dev/images/**/*')
+        .pipe(imagemin({
+            progressive: true,
+            svgoPlugins: [{removeViewBox: false}],
+            use: [pngquant()]
+        }))
+        .pipe(gulp.dest('dist/images'));
 });
 
-// Loop through the js directory and create one minified js for each folder
-gulp.task('minifyJs', ['clean'], function () {
-    var scriptsPath = 'public/js';
-    var folders = getFolders(scriptsPath);
-
-    var tasks = folders.map(function (folder) {
-        var minFile = folder + '.min.js';
-        return gulp.src(path.join(scriptsPath, folder, '/*.js'))
-            .pipe(closureCompiler({
-                compilerPath: 'bower_components/closure-compiler/compiler.jar',
-                fileName: minFile
-            }))
-            .pipe(gulp.dest('dist/js/'))
-            .on('end', function () {
-                del(minFile);
-            });
-    });
-
-    return merge(tasks);
+// Create template cache module
+gulp.task('template', ['clean'], function () {
+    return gulp.src('dev/**/*.html')
+        .pipe(templateCache('index-templates.js', {
+            module: 'templates',
+            standalone: true
+        }))
+        .pipe(gulp.dest('dist/app'));
 });
 
+// Create Offline cache manifest
+gulp.task('manifest', ['gen-prod-files', 'image', 'template'], function () {
+    return gulp.src(['dist/*/**'])
+        .pipe(manifest({
+            hash: true,
+            preferOnline: true,
+            network: ['http://*', 'https://*', '*'],
+            filename: 'cache.manifest',
+            exclude: 'cache.manifest'
+        }))
+        .pipe(gulp.dest('dist'));
+});
+
+// Not used currently since we are no longer using bootstrap UI
 gulp.task('less', function () {
     return gulp.src(['less/site.less'])
         .pipe(less({
             paths: [ "bower_components/bootstrap/less" ]
         }))
-        .pipe(gulp.dest('public/css/index'));
+        .pipe(gulp.dest('dev/css/index'));
 });
 
 // build task
-gulp.task('build', ['process-html']);
-// gulp.task('default', ['less']);
+gulp.task('build', ['manifest']);

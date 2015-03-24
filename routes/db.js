@@ -293,7 +293,7 @@ function addStockList(req, res) {
             !req.body.hasOwnProperty('symbol') ||
             !req.body.hasOwnProperty('exchange')) {
         res.status(400);
-        res.send("createEvent: Malformed body: " + JSON.stringify(req.body));
+        res.send("addStockList: Malformed body: " + JSON.stringify(req.body));
         return;
     }
 
@@ -323,7 +323,6 @@ function addStockList(req, res) {
         res.status(400);
         res.send(error);
     });
-    res.send();
 }
 
 // Delete a stock from stocklist
@@ -334,22 +333,131 @@ function delStockList(req, res) {
         res.send("delStockList: invalid symbol: " + symbol);
         return;
     }
-    if (!req.body) {
+
+    knex.transaction(function (trx) {
+        knex(tbl.stocks)
+            .transacting(trx)
+            .where({
+                symbol: symbol
+            })
+            .del()
+            .then(function (rownum) {
+                if (!rownum) {
+                    return Promise.reject("delStockList: ' + entry.symbol + ' not in watchlist.");
+                }
+                if (rownum !== 1) {
+                    return Promise.reject("delStockList: ' + entry.symbol + ' appears multiple times.");
+                }
+            })
+            .then(trx.commit)
+            .catch(trx.rollback);
+    }).then(function (rows) {
+        res.send();
+    })['catch'](function (error) {
+        // Error occurred within transaction
         res.status(400);
-        res.send("delStockList: Malformed body: " + JSON.stringify(req.body));
+        res.send(error);
+    });
+
+}
+
+// Get stock event
+// optional:
+//  ?symbol='symbolname'
+function getStockEvent(req, res) {
+    var query = knex(tbl.stock_events).orderBy('time', 'desc');
+
+    if (req.query.symbol) {
+        query.where({
+            symbol: req.query.symbol
+        });
+    }
+
+    query.then(function (rows) {
+        res.json(rows);
+    })['catch'](function (error) {
+        res.status(400);
+        res.send(error);
+    });
+}
+
+// Add stock event
+function addStockEvent(req, res) {
+    if (!req.body ||
+            !req.body.hasOwnProperty('symbol') ||
+            !req.body.hasOwnProperty('buy') ||
+            !req.body.hasOwnProperty('time') ||
+            !req.body.hasOwnProperty('position') ||
+            !req.body.hasOwnProperty('price') ||
+            !req.body.hasOwnProperty('fee')) {
+        res.status(400);
+        res.send("addStockEvent: Malformed body: " + JSON.stringify(req.body));
         return;
     }
 
-    knex(tbl.stocks).where({
-        symbol: symbol
-    }).del().then(function (rownum) {
-        // console.log(rownum);
-        if (rownum !== 1) {
-            res.status(400);
-            res.send({rownum: rownum});
-        } else {
-            res.send(null);
-        }
+    knex.transaction(function (trx) {
+        var entry = {
+            symbol: req.body.symbol,
+            buy: req.body.buy,
+            time: req.body.time,
+            position: req.body.position,
+            price: req.body.price,
+            fee: req.body.fee
+        };
+
+        return trx
+            .insert(entry).into(tbl.stock_events);
+    }).then(function (inserts) {
+        // Number of records written
+        // console.log(inserts.length);
+        res.send();
+    })['catch'](function (error) {
+        // Error occurred within transaction
+        res.status(400);
+        res.send(error);
+    });
+    res.send();
+}
+
+// Delete a stock event
+function delStockEvent(req, res) {
+    var symbol = req.params.symbol,
+        time = req.params.time;
+    if (!symbol) {
+        res.status(400);
+        res.send("delStockEvent: invalid symbol: " + symbol);
+        return;
+    }
+    if (!time) {
+        res.status(400);
+        res.send("delStockEvent: invalid time: " + time);
+        return;
+    }
+
+    knex.transaction(function (trx) {
+        knex(tbl.stock_events)
+            .transacting(trx)
+            .where({
+                symbol: symbol,
+                time: time
+            })
+            .del()
+            .then(function (rownum) {
+                if (!rownum) {
+                    return Promise.reject("delStockEvent: ' + entry.symbol + ' not in stock event.");
+                }
+                if (rownum !== 1) {
+                    return Promise.reject("delStockEvent: multiple stock event with same id?");
+                }
+            })
+            .then(trx.commit)
+            .catch(trx.rollback);
+    }).then(function (rows) {
+        res.send();
+    })['catch'](function (error) {
+        // Error occurred within transaction
+        res.status(400);
+        res.send(error);
     });
 }
 
@@ -386,5 +494,8 @@ module.exports = {
     getFundholderStat: getFundholderStat,
     getStockList: getStockList,
     addStockList: addStockList,
-    delStockList: delStockList
+    delStockList: delStockList,
+    getStockEvent: getStockEvent,
+    addStockEvent: addStockEvent,
+    delStockEvent: delStockEvent
 };

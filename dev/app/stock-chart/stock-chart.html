@@ -1,0 +1,237 @@
+<md-content class="panel panel-default" ng-show="stocksymbol">
+    <md-toolbar class="panel-heading md-primary md-hue-1">
+        <div layout>
+            <div flex>{{stock.name}} ({{stocksymbol}})</div>
+            <div ng-show="StockChartCtrl.isValidSym">
+                <md-button aria-label="refresh"
+                           style="padding: 0px;"
+                           ng-click="getStockQuote()">
+                    <md-icon md-svg-icon="navigation:refresh"></md-icon>
+                </md-button>
+                <md-button aria-label="buy or sell"
+                           style="padding: 0px;"
+                           ng-click="StockChartCtrl.toggleBuySell()">
+                    <md-icon md-svg-icon="action:shopping-cart"></md-icon>
+                </md-button>
+                <md-button aria-label="maintain watchlist"
+                           style="padding: 0px;"
+                           ng-click="StockChartCtrl.toggleWatchList()">
+                    <md-icon md-svg-icon="{{StockChartCtrl.getToggleIcon()}}"></md-icon>
+                </md-button>
+            </div>
+        </div>
+    </md-toolbar>
+
+    <div class="panel-body" ng-hide="StockChartCtrl.isValidSym">
+        <p>Unable to retrieve data</p>
+    </div>
+
+    <!-- Buy/Sell Form -->
+    <div class="panel-body" ng-show="StockChartCtrl.exposeForm">
+        <!-- display buy/sell history -->
+
+        <!-- form -->
+        <md-content md-theme="dark" class="md-padding">
+            <form name="Stockform" ng-submit="StockChartCtrl.addToStockevent()">
+                <div layout="row">
+                    <md-select class="md-dark-theme dark" ng-model="StockChartCtrl.stockform.type">
+                        <md-option ng-value="'BUY'" ng-selected="true">BUY</md-option>
+                        <md-option ng-value="'SELL'">SELL</md-option>
+                    </md-select>
+                    <md-input-container>
+                        <label>Date</label>
+                        <input type="date" ng-model="StockChartCtrl.stockform.time"
+                               name="date"
+                               max="{{StockChartCtrl.today}}"
+                               required/>
+                        <div ng-messages="Stockform.date.$error">
+                            <div ng-message="required">Please enter a valid date.</div>
+                            <div ng-message="max">Are you time travelling?</div>
+                        </div>
+                    </md-input-container>
+                </div>
+                <div layout="row">
+                    <md-input-container>
+                        <label>Position</label>
+                        <input type="number" min="1" step="1" pattern="[\d]*"
+                               ng-model="StockChartCtrl.stockform.position"
+                               name="position"
+                               required/>
+                    </md-input-container>
+                    <md-input-container>
+                        <label>Price</label>
+                        <input type="number" min="0.01" step="0.01" pattern="[\d\.]*"
+                               ng-model="StockChartCtrl.stockform.price"
+                               name="price"
+                               required/>
+                    </md-input-container>
+                    <md-input-container>
+                        <label>Fee</label>
+                        <input type="number" min="0" step="0.01" pattern="[\d\.]*"
+                               ng-model="StockChartCtrl.stockform.fee"
+                               name="fee"
+                               required/>
+                    </md-input-container>
+                </div>
+                <div layout="row">
+                    <md-button class="md-raised" flex>
+                        <md-icon md-svg-icon="content:add-circle"></md-icon><span> {{StockChartCtrl.stockform.type}}</span>
+                    </md-button>
+                </div>
+            </form>
+        </md-content>
+    </div>
+
+    <div class="panel-body" ng-show="StockChartCtrl.isValidSym">
+
+        <!-- Transaction history -->
+        <div layout="column">
+            <div ng-repeat="event in StockChartCtrl.stockevent">
+                {{event.time | date : 'MMM-dd-yyyy'}}:
+                <span ng-if="event.buy">Bought </span>
+                <span ng-if="!event.buy">Sold </span>
+                {{event.position}} units @ {{event.price}}
+            </div>
+        </div>
+
+        <md-divider></md-divider>
+        <!-- START of stock quotes -->
+        <div layout layout-align="start center">
+            <div flex><h1>{{stock.askdisp}}</h1></div>
+            <div ng-style="stock.changestyle"><h2><md-icon md-svg-icon="{{stock.changeicon}}"></md-icon>{{stock.change}}</h2></div>
+        </div>
+        <div layout style="font-size: smaller;">
+            Updated on: {{stock.created | date : 'medium'}}
+        </div>
+        <div layout style="font-size: smaller;">
+            <div flex="40" layout="column">
+                <div layout>
+                    <div flex>Open</div>
+                    <div>{{stock.open}}</div>
+                </div>
+                <div layout>
+                    <div flex>High</div>
+                    <div>{{stock.dayshigh}}</div>
+                </div>
+                <div layout>
+                    <div flex>Low</div>
+                    <div>{{stock.dayslow}}</div>
+                </div>
+            </div>
+            <div flex></div>
+            <div flex="55" layout="column">
+                <div layout>
+                    <div flex>Market cap</div>
+                    <div>{{stock.mktcap}}</div>
+                </div>
+                <div layout>
+                    <div flex>P/E Ratio</div>
+                    <div>{{stock.PEratio}}</div>
+                </div>
+                <div layout>
+                    <div flex>Dividend</div>
+                    <div>{{stock.divyield}}</div>
+                </div>
+            </div>
+
+        </div>
+        <!-- END of stock quotes -->
+
+        <!--  Get stock graph
+              https://code.google.com/p/yahoo-finance-managed/wiki/miscapiImageDownload
+        -->
+        <md-tabs md-selected="StockChartCtrl.tabindex" flex style="overflow: hidden">
+            <md-tab ng-repeat="chart in StockChartCtrl.charts"
+                    label="{{chart.timespan}}">
+            </md-tab>
+        </md-tabs>
+
+        <!-- Using switch statement, and not placed inline within tab, because
+             I want the image to be loaded only if the tab is visible
+        -->
+        <ng-switch on="StockChartCtrl.tabindex" class="tabpanel-container">
+            <div role="tabpanel"
+                 aria-labelledby="1D"
+                 ng-switch-when="0"
+                 md-swipe-left="StockChartCtrl.nexttab()"
+                 md-swipe-right="StockChartCtrl.prevtab()">
+                 <img class="fullwidth"
+                      ng-src="{{StockChartCtrl.getStockChartSrc()}}"
+                      ng-srcset="{{StockChartCtrl.getStockChartSrcset()}}"
+                      alt="1D chart"></img>
+            </div>
+            <div role="tabpanel"
+                 aria-labelledby="5D"
+                 ng-switch-when="1"
+                 md-swipe-left="StockChartCtrl.nexttab()"
+                 md-swipe-right="StockChartCtrl.prevtab()">
+                 <img class="fullwidth"
+                      ng-src="{{StockChartCtrl.getStockChartSrc()}}"
+                      ng-srcset="{{StockChartCtrl.getStockChartSrcset()}}"
+                      alt="5D chart"></img>
+            </div>
+            <div role="tabpanel"
+                 aria-labelledby="3M"
+                 ng-switch-when="2"
+                 md-swipe-left="StockChartCtrl.nexttab()"
+                 md-swipe-right="StockChartCtrl.prevtab()">
+                 <img class="fullwidth"
+                      ng-src="{{StockChartCtrl.getStockChartSrc()}}"
+                      ng-srcset="{{StockChartCtrl.getStockChartSrcset()}}"
+                      alt="3M chart"></img>
+            </div>
+            <div role="tabpanel"
+                 aria-labelledby="6M"
+                 ng-switch-when="3"
+                 md-swipe-left="StockChartCtrl.nexttab()"
+                 md-swipe-right="StockChartCtrl.prevtab()">
+                 <img class="fullwidth"
+                      ng-src="{{StockChartCtrl.getStockChartSrc()}}"
+                      ng-srcset="{{StockChartCtrl.getStockChartSrcset()}}"
+                      alt="6M chart"></img>
+            </div>
+            <div role="tabpanel"
+                 aria-labelledby="1Y"
+                 ng-switch-when="4"
+                 md-swipe-left="StockChartCtrl.nexttab()"
+                 md-swipe-right="StockChartCtrl.prevtab()">
+                 <img class="fullwidth"
+                      ng-src="{{StockChartCtrl.getStockChartSrc()}}"
+                      ng-srcset="{{StockChartCtrl.getStockChartSrcset()}}"
+                      alt="1Y chart"></img>
+            </div>
+            <div role="tabpanel"
+                 aria-labelledby="2Y"
+                 ng-switch-when="5"
+                 md-swipe-left="StockChartCtrl.nexttab()"
+                 md-swipe-right="StockChartCtrl.prevtab()">
+                 <img class="fullwidth"
+                      ng-src="{{StockChartCtrl.getStockChartSrc()}}"
+                      ng-srcset="{{StockChartCtrl.getStockChartSrcset()}}"
+                      alt="2Y chart"></img>
+            </div>
+            <div role="tabpanel"
+                 aria-labelledby="5Y"
+                 ng-switch-when="6"
+                 md-swipe-left="StockChartCtrl.nexttab()"
+                 md-swipe-right="StockChartCtrl.prevtab()">
+                 <img class="fullwidth"
+                      ng-src="{{StockChartCtrl.getStockChartSrc()}}"
+                      ng-srcset="{{StockChartCtrl.getStockChartSrcset()}}"
+                      alt="5Y chart"></img>
+            </div>
+            <div role="tabpanel"
+                 aria-labelledby="max"
+                 ng-switch-default
+                 md-swipe-left="StockChartCtrl.nexttab()"
+                 md-swipe-right="StockChartCtrl.prevtab()">
+                 <img class="fullwidth"
+                      ng-src="{{StockChartCtrl.getStockChartSrc()}}"
+                      ng-srcset="{{StockChartCtrl.getStockChartSrcset()}}"
+                      alt="max chart"></img>
+            </div>
+        </ng-switch>
+
+    </div>
+
+</md-content>

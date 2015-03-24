@@ -1,0 +1,118 @@
+/****************************
+ * Background               *
+ ****************************/
+body {
+    background: url("/images/white_paper.jpg");
+}
+
+#main-content {
+    background: transparent;
+}
+
+/****************************
+ * Profile pic              *
+ ****************************/
+.face {
+    width: 40px;
+    height: 40px;
+    border-radius: 2px;
+    font-size:20px;
+    color: #ffffff;
+    line-height:40px;
+    text-align:center;
+    background: #666666;
+    text-decoration: none;
+}
+
+/****************************
+ * Angular Material Styling *
+ ****************************/
+.menuBtn {
+    background-color: transparent;
+    border: 0px;
+}
+
+/* stretch buttons to full width within side menu */
+md-sidenav md-item-content .md-button {
+    width: 100%;
+    text-align: left;
+}
+
+/* Side menu text */
+md-sidenav md-item-content .md-button span {
+    text-transform: uppercase;
+}
+
+/* button text */
+.md-button span {
+    vertical-align: middle;
+}
+
+md-sidenav .md-tile-content {
+    padding: 5px;
+}
+
+/****************************
+ * Panel styling            *
+ ****************************/
+
+.container {
+    margin: 15px;
+}
+
+.panel {
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+.panel-body {
+    padding: 10px;
+}
+.panel-heading {
+    padding: 10px 10px;
+    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
+    min-height: initial;
+}
+
+.panel .md-button {
+    text-transform: none;
+}
+
+/****************************
+ * Custom badge styling     *
+ ****************************/
+ .lf-badge {
+    border-color: gainsboro;
+    border-style: solid;
+    border-radius: 10px;
+    background: cornflowerblue;
+    color: white;
+    padding: 2px;
+}
+
+.lf-badge.selected {
+    border-style: inset;
+}
+
+.lf-badge.notselected {
+    border-style: outset;
+    background: whitesmoke;
+    color: black;
+}
+
+/****************************
+ * Other styling            *
+ ****************************/
+.fullwidth {
+    width: 100%
+}
+
+/*****************************************
+ * Select box text in md-dark-theme form *
+ *****************************************/
+md-select.dark > md-select-label > span {
+    color: white;
+}

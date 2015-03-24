@@ -79,17 +79,16 @@ var app = express();
 app.set('port', process.env.PORT || 3000);
 
 if (development) {
-    app.set('views', __dirname + '/views');
+    app.set('views', __dirname + '/dev/views');
+    app.use(express['static'](path.join(__dirname, 'dev')));
 } else {
     app.set('views', __dirname + '/dist/views');
     app.use(express['static'](path.join(__dirname, 'dist')));
 }
 app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
-
 app.use(express['static'](path.join(__dirname, 'bower_components')));
-app.use(express['static'](path.join(__dirname, 'public')));
-app.use(favicon(__dirname + '/public/images/favicon.ico'));
+app.use(favicon(__dirname + '/dev/images/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -199,7 +198,15 @@ app.get('/db/fundholderstat', ensureAuthenticated, db.getFundholderStat);
 app.get('/db/stock', ensureAuthenticated, db.getStockList);
 app.post('/db/stock', ensureAuthenticated, db.addStockList);
 app.delete('/db/stock/:symbol', ensureAuthenticated, db.delStockList);
+app.get('/db/stockevent', ensureAuthenticated, db.getStockEvent);
+app.post('/db/stockevent', ensureAuthenticated, db.addStockEvent);
+app.delete('/db/stockevent/:symbol/:time', ensureAuthenticated, db.delStockList);
 
+// Offline caching manifest
+app.get("/cache.manifest", function (req, res) {
+    res.header("Content-Type", "text/cache-manifest");
+    res.end("CACHE MANIFEST");
+});
 
 // Main application endpoints
 app.get('/', ensureAuthenticated, function (req, res) {
@@ -214,7 +221,8 @@ app.get('/', ensureAuthenticated, function (req, res) {
 app.get('/login', function (req, res) {
     res.render('login', {
         COPYRIGHT_TEXT: copyright_text,
-        VERSION: app_version
+        VERSION: app_version,
+        DEVMODE: development
     });
 });
 
