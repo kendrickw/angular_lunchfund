@@ -9,9 +9,8 @@ var debug = require('gulp-debug'),
     useref = require('gulp-useref'),
     uglify = require('gulp-uglify'),
     manifest = require('gulp-manifest'),
-    imagemin = require('gulp-imagemin'),
-    pngquant = require('imagemin-pngquant'),
     templateCache = require('gulp-angular-templatecache'),
+    imagemin = require('gulp-imagemin'),
     del = require('del');
 
 // Clean
@@ -36,9 +35,7 @@ gulp.task('gen-prod-files', ['clean'], function () {
 gulp.task('image', ['clean'], function () {
     return gulp.src('dev/images/**/*')
         .pipe(imagemin({
-            progressive: true,
-            svgoPlugins: [{removeViewBox: false}],
-            use: [pngquant()]
+            progressive: true
         }))
         .pipe(gulp.dest('dist/images'));
 });

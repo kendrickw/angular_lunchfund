@@ -23,6 +23,27 @@ The SQL database must be populated first before running the lunchfund app.
 * (Ask Kendrick for the current .sql file)
 * routes/config.js contains user configuration parameters
 
+Once the package is downloaded, first install the dependencies:
+(This Assumes you have bower and Node.js already installed)
+# bower install
+# npm install
+
+To start the server in development mode
+* If you are using powershell in windows: $env:NODE_ENV="development"
+* If you are using UNIX: set NODE_ENV="development"
+* npm run start
+
+To start the server in production mode
+* If you are using powershell in windows: $env:NODE_ENV="production"
+* If you are using UNIX: set NODE_ENV="production"
+* npm run start
+
+To deploy development version to BLUEMIX (Read manifest.yml for detail)
+* npm run deploy-dev
+
+To deploy production version to BLUEMIX (Read manifest.dist.yml for detail)
+* npm run deploy-prod
+
 Features
 --------
 
