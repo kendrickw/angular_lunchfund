@@ -1,0 +1,97 @@
+-- MYSQL script to initialize the database
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lunchers`
+--
+
+CREATE TABLE IF NOT EXISTS `lunchers` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(15) NOT NULL DEFAULT '',
+  `firstname` varchar(20) NOT NULL DEFAULT '',
+  `lastname` varchar(20) NOT NULL DEFAULT '',
+  `email` varchar(50) DEFAULT NULL,
+  `picture` varchar(2500) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lunch_events`
+--
+
+CREATE TABLE IF NOT EXISTS `lunch_events` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `rest_id` int(11) NOT NULL DEFAULT '0',
+  `time` datetime DEFAULT NULL,
+  `bill` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `totalpaid` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `fund` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `fundholder` int(11) NOT NULL DEFAULT '0',
+  `submitter` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `rest_id` (`rest_id`),
+  KEY `fundholder` (`fundholder`),
+  KEY `submitter` (`submitter`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lunch_event_lookup`
+--
+
+CREATE TABLE IF NOT EXISTS `lunch_event_lookup` (
+  `lunch_event_id` int(11) NOT NULL DEFAULT '0',
+  `luncher_id` int(11) NOT NULL DEFAULT '0',
+  `multiplier` tinyint(4) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`lunch_event_id`,`luncher_id`),
+  KEY `luncher_id` (`luncher_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `restaurants`
+--
+
+CREATE TABLE IF NOT EXISTS `restaurants` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `stocks`
+--
+
+CREATE TABLE IF NOT EXISTS `stocks` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `symbol` varchar(20) NOT NULL,
+  `exchange` varchar(20) NOT NULL DEFAULT 'NASDAQ',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY (`symbol`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `stock_event`
+--
+
+CREATE TABLE IF NOT EXISTS `stock_events` (
+  `symbol` varchar(20) NOT NULL,
+  `time` datetime NOT NULL,
+  `buy` tinyint(1) NOT NULL,
+  `position` int(11) NOT NULL,
+  `price` decimal(10,2) NOT NULL,
+  `fee` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`symbol`, `time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
