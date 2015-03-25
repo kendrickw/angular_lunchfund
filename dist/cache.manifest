@@ -45,9 +45,6 @@ images/ios/iphone4_ios6.jpg
 images/ios/iphone4_ios7.jpg
 images/ios/iphone5_ios6.jpg
 images/ios/iphone5_ios7.jpg
-images/material-svg/content/ic_add_circle_24px.svg
-images/material-svg/content/ic_remove_circle_24px.svg
-images/material-svg/content/ic_undo_24px.svg
 images/material-svg/action/ic_account_balance_wallet_24px.svg
 images/material-svg/action/ic_dashboard_24px.svg
 images/material-svg/action/ic_done_24px.svg
@@ -57,6 +54,9 @@ images/material-svg/action/ic_settings_24px.svg
 images/material-svg/action/ic_shopping_cart_24px.svg
 images/material-svg/action/ic_trending_down_24px.svg
 images/material-svg/action/ic_trending_up_24px.svg
+images/material-svg/content/ic_add_circle_24px.svg
+images/material-svg/content/ic_remove_circle_24px.svg
+images/material-svg/content/ic_undo_24px.svg
 images/material-svg/file/ic_cloud_download_24px.svg
 images/material-svg/file/ic_cloud_upload_24px.svg
 images/material-svg/image/ic_edit_24px.svg
@@ -76,4 +76,4 @@ https://*
 SETTINGS:
 prefer-online
 
-# hash: 43d6bfaea0c36aa49a1ef8ccfc95bc4303756073b991eeffdaa40747fb2c1027
+# hash: 42bbec655a65bb6be9cba7a544ec27c08865fab50675f8aee244f5002bfbcd77
