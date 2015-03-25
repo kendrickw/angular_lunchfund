@@ -1,0 +1,12 @@
+applications:
+- services:
+  - lunchfund-ClearDB
+  disk_quota: 1024M
+  host: lunchfund
+  name: LunchFund
+  command: node app.js
+  env:
+    NODE_ENV: 'production'
+  domain: mybluemix.net
+  instances: 1
+  memory: 256M
