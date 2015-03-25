@@ -28,12 +28,16 @@ Once the package is downloaded, first install the dependencies:
 # bower install
 # npm install
 
+Install gulp if you haven't already:
+* (login as root): npm install gulp -g
+
 To start the server in development mode
 * If you are using powershell in windows: $env:NODE_ENV="development"
 * If you are using UNIX: set NODE_ENV="development"
 * npm run start
 
 To start the server in production mode
+* Build the production code: gulp build
 * If you are using powershell in windows: $env:NODE_ENV="production"
 * If you are using UNIX: set NODE_ENV="production"
 * npm run start
