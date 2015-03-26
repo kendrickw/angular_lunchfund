@@ -43,7 +43,15 @@
 
         // Toggle user between attendee and nonattendee
         function toggle(user) {
-            var idx = me.attendee().indexOf(user);
+            var idx;
+
+            idx = me.lunchers().indexOf(user);
+            if (idx === -1) {
+                // user not part of lunchers, so exit early.
+                return;
+            }
+
+            idx = me.attendee().indexOf(user);
             if (idx !== -1) {
                 me.attendee().splice(idx, 1);
             } else {

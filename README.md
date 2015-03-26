@@ -8,45 +8,41 @@ Getting Started
 
 The [zipball of latest release](https://github.com/kendrickw/angular_lunchfund/archive/master.zip) contains everything you need to deploy the lunchfund app.
 
-This webapp uses the following technologies:
-* Node.js (webserver)
-* gulp (for building the production app)
-* bower (for managing UI dependencies)
-* Angular.js framework
-* Angular Material UI components
-* mySQL database for hosting the lunchfund data
-* google spreadsheet as an alternate backup for lunchfund data
-* GOOGLE sign-on authentication
-* option deployment to Bluemix
+First things first, make sure you have Node.js already installed. (https://nodejs.org/)
 
-The SQL database must be populated first before running the lunchfund app.
-* (Ask Kendrick for the current .sql file)
-* routes/config.js contains user configuration parameters
+Next, check if the following tools have been installed:
+* bower.  To install: `npm install -g bower`
+* gulp.  To install: `npm install -g gulp`
+* karma-cli.  To install: `npm install -g karma-cli`
 
-Once the package is downloaded, first install the dependencies:
-(This Assumes you have bower and Node.js already installed)
-# bower install
-# npm install
+Once you have cloned the repository, install the dependencies:
+* `bower install`
+* `npm install`
 
-Install gulp if you haven't already:
-* (login as root): npm install gulp -g
+Configure MYSQL and GOOGLE APP credentials by editing `routes/config.js`.  The SQL database must be available before running the lunchfund app.  A mysql script to create the initial database is included in `lunchfund_init.mysql`
 
-To start the server in development mode
-* If you are using powershell in windows: $env:NODE_ENV="development"
-* If you are using UNIX: set NODE_ENV="development"
-* npm run start
+To start the server locally in development mode:
+* export the `NODE_ENV` environment variable to `"development"`.
+For example, in Windows powershell:
+    ```
+    $env:NODE_ENV="development"
+    ```
+In UNIX:
+    ```
+    export NODE_ENV="development"
+    ```
+* Start the node express web server: `npm run start`
 
-To start the server in production mode
-* Build the production code: gulp build
-* If you are using powershell in windows: $env:NODE_ENV="production"
-* If you are using UNIX: set NODE_ENV="production"
-* npm run start
+To start the server locally in prooduction mode:
+* Build the distribution files: `gulp build`
+* export the `NODE_ENV` environment variable to `"production"`
+* Start the node express web server: `npm run start`
 
-To deploy development version to BLUEMIX (Read manifest.yml for detail)
-* npm run deploy-dev
+To deploy development version to BLUEMIX (Read `manifest.yml` for deployment details)
+* `npm run deploy-dev`
 
-To deploy production version to BLUEMIX (Read manifest.dist.yml for detail)
-* npm run deploy-prod
+To deploy production version to BLUEMIX (Read `manifest.dist.yml` for deployment details)
+* `npm run deploy-prod`
 
 Features
 --------
@@ -56,6 +52,20 @@ Features
 * Alternate backup to GOOGLE spreadsheet
 * Calculate lunch fund automatically using number of attendees and bill amount
 * Stock portfolio management
+* Offline caching for production server
+
+Technologies
+------------
+* Node.js (webserver)
+* gulp (for building the production app)
+* bower (for managing UI dependencies)
+* Angular.js framework
+* Angular Material UI components
+* mySQL database for hosting the lunchfund data
+* google spreadsheet as an alternate backup for lunchfund data
+* GOOGLE sign-on authentication
+* optional deployment to Bluemix
+* karma/jasmine for testing
 
 Why not native app?
 -------------------
@@ -77,7 +87,14 @@ https://github.com/kendrickw/angular_lunchfund/issues
 Testing
 -------
 
-None at the moment.
+Testing is performed using Karma and Jasmine.  The configuration file is located in `karma.conf.js`.
+All the test files are in `test` directory.
+
+To Start test, first run the production build, as the testcases need access to some of the angular javascripts that are installed in `bower_components`:
+```
+gulp build
+karma start
+```
 
 License
 -------

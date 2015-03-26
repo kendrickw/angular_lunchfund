@@ -67,7 +67,7 @@
 
             me.eachPays = Math.ceil(me.totalAmount / numPerson);
             totalCollected = me.eachPays * numPerson;
-            return totalCollected - me.totalAmount;
+            return parseFloat((totalCollected - me.totalAmount).toFixed(2));
         }
 
         function bumpTipsOffset(up) {

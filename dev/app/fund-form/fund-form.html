@@ -27,7 +27,7 @@
                        ng-change="FundCtrl.tipOffset = 0"
                        ng-model="FundCtrl.billAmount"
                        required/>
-                <div ng-messages="Fundform.bill.$error">
+                <div ng-messages="Fundform.bill.$error" style="color: red">
                     <div ng-message="required">Please enter the bill amount</div>
                     <div ng-message="number">The bill amount must be a number.</div>
                     <div ng-message="min">There is no such thing as free lunch.</div>
