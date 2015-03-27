@@ -137,8 +137,12 @@ if (development) {
 function ensureGoogleAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         next();
-    } else {
-        res.redirect('/login');
+    } else {        
+        if (req.url.indexOf('/db/') === 0) {
+            res.status(401).send('Unauthorized');
+        } else {
+            res.redirect('/login');
+        }
     }
 }
 
@@ -155,7 +159,11 @@ function ensureAuthenticated(req, res, next) {
             res.redirect('/login');
         });
     } else {
-        res.redirect('/login');
+        if (req.url.indexOf('/db/') === 0) {
+            res.status(401).send('Unauthorized');
+        } else {
+            res.redirect('/login');
+        }
     }
 }
 
@@ -202,11 +210,13 @@ app.get('/db/stockevent', ensureAuthenticated, db.getStockEvent);
 app.post('/db/stockevent', ensureAuthenticated, db.addStockEvent);
 app.delete('/db/stockevent/:symbol/:time', ensureAuthenticated, db.delStockList);
 
-// Offline caching manifest
-app.get("/cache.manifest", function (req, res) {
-    res.header("Content-Type", "text/cache-manifest");
-    res.end("CACHE MANIFEST");
-});
+if (!development) {
+    // Offline caching manifest for production build only
+    app.get("/cache.manifest", function (req, res) {
+        res.header("Content-Type", "text/cache-manifest");
+        res.end("CACHE MANIFEST");
+    });
+}
 
 // Main application endpoints
 app.get('/', ensureAuthenticated, function (req, res) {

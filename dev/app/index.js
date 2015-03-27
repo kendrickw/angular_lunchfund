@@ -10,7 +10,19 @@
         'fundChart', 'fundStat', 'stockChart'
     ]);
 
-    app.config(['$stateProvider', '$urlRouterProvider', '$mdThemingProvider', '$mdIconProvider', function ($stateProvider, $urlRouterProvider, $mdThemingProvider, $mdIconProvider) {
+    // Handle Unauthorized 401 access
+    app.factory('authHttpResponseInterceptor', ['$q', '$window', function ($q, $window) {
+        return {
+            responseError: function(response) {
+                if (response.status === 401) {
+                    $window.location.href = '/login';
+                }
+                return $q.reject(response);
+            }
+        };
+    }]);
+
+    app.config(['$stateProvider', '$urlRouterProvider', '$mdThemingProvider', '$mdIconProvider', '$httpProvider', function ($stateProvider, $urlRouterProvider, $mdThemingProvider, $mdIconProvider, $httpProvider) {
 
         // For unmatched routes
         $urlRouterProvider.otherwise('/home');
@@ -31,6 +43,8 @@
             url: '/setting',
             templateUrl: 'app/routes/setting.html'
         });
+        
+        $httpProvider.interceptors.push('authHttpResponseInterceptor');
 
         $mdThemingProvider.theme('default')
             .primaryPalette('indigo')
@@ -61,7 +75,7 @@
             .icon('navigation:refresh', 'images/material-svg/navigation/ic_refresh_24px.svg', 24)
             .icon('navigation:expand-more', 'images/material-svg/navigation/ic_expand_more_24px.svg', 24)
             .icon('navigation:expand-less', 'images/material-svg/navigation/ic_expand_less_24px.svg', 24)
-            .icon('file:cloud-upload', 'images/material-svg/file/ic_cloud_upload_24px.svg', 24);
+            .icon('file:cloud-upload', 'images/material-svg/file/ic_cloud_upload_24px.svg', 24);        
     }]);
 
     app.run(['$http', '$templateCache', function ($http, $templateCache) {

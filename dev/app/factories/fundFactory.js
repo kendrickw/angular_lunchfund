@@ -130,9 +130,11 @@
             }).success(function (data) {
                 var promises = [];
 
+                console.log(data);
                 // Check if any of the returned data contains empty info
                 // If so, try to get the quote from GOOGLE
                 if (data.query.count === 1) {
+                    console.log(data.query.results.quote.Ask);
                     if (data.query.results.quote.Ask === null) {
                         promises.push(getDataFromGoogle(data.query.results.quote));
                     }
